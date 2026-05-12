@@ -1,0 +1,81 @@
+# North East Bexar County Democrats (NEBCD)
+# https://www.nebcd.org
+# llms.txt — structured site context for AI language models
+
+## Organization
+
+Name: North East Bexar County Democrats
+Abbreviation: NEBCD
+Type: Democratic political club / PAC
+Founded: 1994
+Description: The oldest Democratic club in Bexar County, Texas. NEBCD raises funds, organizes volunteers, and works to maximize voter turnout across Northeast San Antonio and Bexar County. Open to anyone wishing to be informed or involved in local politics.
+
+## Contact & Location
+
+Address: 6521 San Pedro Ave., San Antonio, TX 78216
+Phone: 210-917-1790
+Email: info@nebcd.org
+Hours: Monday–Tuesday & Thursday–Friday 8 AM–4 PM; Wednesday 8 AM–7 PM; Saturday–Sunday closed except events
+
+## Treasurer / Political Disclaimer
+
+Treasurer: Deborah Dillard
+Mailing Address: P.O. Box 700766, San Antonio, TX 78270-0766
+Political Ad Disclosure: Pol. Ad. paid for by North East Bexar County Democrats, Deborah Dillard Treasurer
+
+## Social & External Links
+
+Facebook: https://www.facebook.com/NEBCD/
+Instagram: https://www.instagram.com/nebcd_tx/
+Membership / Dues: https://secure.actblue.com/donate/nebcddues
+Donate: https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1
+Volunteer Signup (Mobilize): https://www.mobilize.us/nebcd/
+
+## Site Structure
+
+/             — Homepage. Mission, upcoming events preview, endorsements preview, get involved, photo gallery, office info.
+/events       — Full events list and Google Calendar embed. Upcoming meetings, phonebanks, canvassing, election days. Voting resources.
+/endorsements — NEBCD's 2026 endorsed candidates for May 2nd and May 26th elections in Bexar County.
+/volunteer    — Volunteer intake. Ways to help: phonebanks, canvassing, data/admin, events. Google Form intake.
+/terms        — SMS Terms & Conditions for NEBCD text messaging program. (noindex)
+/privacy      — 10DLC Privacy Policy for NEBCD SMS and digital communications. (noindex)
+
+## 2026 Endorsed Candidates
+
+### May 2nd Election
+
+Alamo Heights ISD Board of Trustees:
+- Lindsey Saldana — Place 3 — https://www.lindsey4ahisd.org/
+- Dr. Bianca Cerqueira — Place 4 — https://www.bianca4ahisd.org/
+
+North East ISD Board of Trustees:
+- Mike Wulczyn — District 3 — https://ilikemike.vote/
+- Caprice Garcia — District 7 — https://www.capriceforneisd7.com/
+
+Alamo Colleges Board of Trustees — District 9:
+- Carolyn DeLecour
+- Robert Garcia, CPA — https://www.vote4robertgarcia.com/
+- Joe Jesse Sanchez
+
+### May 26th Democratic Primary Runoff
+
+- Vikki Goodwin — Candidate for Lieutenant Governor
+- Jane Davis — Candidate for Bexar County District Attorney
+- Christine "Chris" Castillo — Candidate for Bexar County District Clerk
+- Joe Jaworski — Candidate for Attorney General
+- Cesar Garcia — Candidate for County Court at Law #10
+- Lucy Adame-Clark — Candidate for Bexar County Clerk
+
+## Voting Resources (Bexar County)
+
+Voter registration / polling location lookup: https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio
+Bexar County Elections Department: https://www.bexar.org/1568/Elections-Department
+
+## Monthly Meetings
+
+Second Saturday of each month, 10:00 AM to noon, at the NEBCD Office (6521 San Pedro Ave., San Antonio TX 78216).
+
+## Pages Excluded from Indexing
+
+/terms  (noindex — SMS terms & conditions)
+/privacy  (noindex — 10DLC privacy policy)

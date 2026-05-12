@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /terms
+Disallow: /terms.html
+Disallow: /privacy
+Disallow: /privacy.html
+Disallow: /admin/
+
+Sitemap: https://www.nebcd.org/sitemap.xml
+
+# llms.txt — structured context for AI language models
+# https://www.nebcd.org/llms.txt
