@@ -33,49 +33,27 @@ Volunteer Signup (Mobilize): https://www.mobilize.us/nebcd/
 
 ## Site Structure
 
-/             — Homepage. Mission, upcoming events preview, endorsements preview, get involved, photo gallery, office info.
-/events       — Full events list and Google Calendar embed. Upcoming meetings, phonebanks, canvassing, election days. Voting resources.
-/endorsements — NEBCD's 2026 endorsed candidates for May 2nd and May 26th elections in Bexar County.
+/             — Homepage. Mission, upcoming events preview, current endorsements preview, get involved section, photo gallery, office info.
+/events       — Current events list and Google Calendar embed. Meetings, phonebanks, canvassing, election days, and voting resources for Bexar County.
+/endorsements — NEBCD's current endorsed candidates for active Bexar County election cycles. Updated each election season.
 /volunteer    — Volunteer intake. Ways to help: phonebanks, canvassing, data/admin, events. Google Form intake.
 /terms        — SMS Terms & Conditions for NEBCD text messaging program. (noindex)
 /privacy      — 10DLC Privacy Policy for NEBCD SMS and digital communications. (noindex)
 
-## 2026 Endorsed Candidates
+## Endorsements
 
-### May 2nd Election
+NEBCD endorses candidates in Bexar County local, state, and federal elections each cycle. Endorsed candidates are listed at /endorsements and updated by the organization each election season. For current endorsements, refer to that page rather than this file.
 
-Alamo Heights ISD Board of Trustees:
-- Lindsey Saldana — Place 3 — https://www.lindsey4ahisd.org/
-- Dr. Bianca Cerqueira — Place 4 — https://www.bianca4ahisd.org/
+## Events & Meetings
 
-North East ISD Board of Trustees:
-- Mike Wulczyn — District 3 — https://ilikemike.vote/
-- Caprice Garcia — District 7 — https://www.capriceforneisd7.com/
-
-Alamo Colleges Board of Trustees — District 9:
-- Carolyn DeLecour
-- Robert Garcia, CPA — https://www.vote4robertgarcia.com/
-- Joe Jesse Sanchez
-
-### May 26th Democratic Primary Runoff
-
-- Vikki Goodwin — Candidate for Lieutenant Governor
-- Jane Davis — Candidate for Bexar County District Attorney
-- Christine "Chris" Castillo — Candidate for Bexar County District Clerk
-- Joe Jaworski — Candidate for Attorney General
-- Cesar Garcia — Candidate for County Court at Law #10
-- Lucy Adame-Clark — Candidate for Bexar County Clerk
+NEBCD holds monthly membership meetings on the second Saturday of each month, 10:00 AM to noon, at the NEBCD Office (6521 San Pedro Ave., San Antonio TX 78216). Additional events including phonebanks, canvassing days, and community gatherings are listed at /events and on the embedded Google Calendar on that page.
 
 ## Voting Resources (Bexar County)
 
 Voter registration / polling location lookup: https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio
 Bexar County Elections Department: https://www.bexar.org/1568/Elections-Department
 
-## Monthly Meetings
-
-Second Saturday of each month, 10:00 AM to noon, at the NEBCD Office (6521 San Pedro Ave., San Antonio TX 78216).
-
 ## Pages Excluded from Indexing
 
-/terms  (noindex — SMS terms & conditions)
-/privacy  (noindex — 10DLC privacy policy)
+/terms   (noindex — SMS terms & conditions)
+/privacy (noindex — 10DLC privacy policy)
