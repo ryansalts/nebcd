@@ -20,7 +20,7 @@
   <meta property="og:site_name" content="North East Bexar County Democrats" />
   <meta property="og:title" content="North East Bexar County Democrats | NEBCD" />
   <meta property="og:description" content="The oldest Democratic club in Bexar County. Raising funds, organizing volunteers, and maximizing voter turnout in Northeast San Antonio since 1994." />
-  <meta property="og:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta property="og:image" content="https://www.nebcd.org/{{HERO_IMAGE}}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="en_US" />
@@ -29,7 +29,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="North East Bexar County Democrats | NEBCD" />
   <meta name="twitter:description" content="The oldest Democratic club in Bexar County. Raising funds, organizing volunteers, and maximizing voter turnout in Northeast San Antonio since 1994." />
-  <meta name="twitter:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta name="twitter:image" content="https://www.nebcd.org/{{HERO_IMAGE}}" />
 
   <!-- ── Schema.org ── -->
   <script type="application/ld+json">
@@ -42,19 +42,19 @@
     "logo": "https://www.nebcd.org/assets/NEBCD-Logo-Color.jpg",
     "description": "The oldest Democratic club in Bexar County. Founded in 1994, NEBCD raises funds, organizes volunteers, and maximizes voter turnout across Northeast San Antonio and Bexar County.",
     "foundingDate": "1994",
-    "email": "info@nebcd.org",
-    "telephone": "+12109171790",
+    "email": "{{OFFICE_EMAIL}}",
+    "telephone": "+1{{OFFICE_PHONE_HREF}}",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "6521 San Pedro Ave.",
+      "streetAddress": "{{OFFICE_ADDRESS_STREET}}",
       "addressLocality": "San Antonio",
       "addressRegion": "TX",
       "postalCode": "78216",
       "addressCountry": "US"
     },
     "sameAs": [
-      "https://www.facebook.com/NEBCD/",
-      "https://www.instagram.com/nebcd_tx/"
+      "{{FACEBOOK_URL}}",
+      "{{INSTAGRAM_URL}}"
     ]
   }
   </script>
@@ -95,7 +95,7 @@
         <li><a href="endorsements.html">Endorsements</a></li>
         <li><a href="#get-involved">Get Involved</a></li>
         <li><a href="#visit">Visit Us</a></li>
-        <li><a href="https://secure.actblue.com/donate/nebcddues" target="_blank" class="nav-cta">Join / Donate</a></li>
+        <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
       </ul>
     </nav>
   </header>
@@ -105,7 +105,7 @@
     <!-- HERO -->
     <section class="hero" id="hero">
       <div class="hero-bg">
-        <img src="assets/NEBCD-Office.webp" alt="NEBCD Office exterior" class="hero-photo" fetchpriority="high" />
+        <img src="{{HERO_IMAGE}}" alt="{{HERO_IMAGE_ALT}}" class="hero-photo" fetchpriority="high" />
         <div class="hero-overlay"></div>
       </div>
       <div class="hero-content container">
@@ -153,36 +153,7 @@
           <p>Stay connected and show up. Every event is a chance to make a difference.</p>
         </div>
         <div class="event-cards">
-          
-          <div class="event-card">
-            <div class="event-date"><span class="event-month">MAY</span><span class="event-day">10</span></div>
-            <div class="event-info">
-              <h3>Monthly Membership Meeting</h3>
-              <p class="event-meta">10:00 AM – Noon · NEBCD Office — 6521 San Pedro Ave.</p>
-              <p>Our regular monthly gathering. Get updates on organizing efforts, meet new members, and find out where volunteers are needed most.</p>
-              <a href="events.html" class="btn-link">RSVP / Learn More →</a>
-            </div>
-          </div>
-
-          <div class="event-card">
-            <div class="event-date"><span class="event-month">MAY</span><span class="event-day">21</span></div>
-            <div class="event-info">
-              <h3>Volunteer Phonebank — Primary Runoff</h3>
-              <p class="event-meta">5:30 PM · Zoom (link sent after RSVP)</p>
-              <p>Help reach voters ahead of the May 26th Democratic Primary Runoff. No experience necessary — training provided.</p>
-              <a href="https://www.mobilize.us/nebcd/" class="btn-link" target="_blank">RSVP / Learn More →</a>
-            </div>
-          </div>
-
-          <div class="event-card">
-            <div class="event-date"><span class="event-month">MAY</span><span class="event-day">26</span></div>
-            <div class="event-info">
-              <h3>Democratic Primary Runoff — Election Day</h3>
-              <p class="event-meta">Polls open 7 AM – 7 PM · Your assigned polling location</p>
-              <p>Vote in the Democratic Primary Runoff. Find your polling location, check your registration, and view your sample ballot before you go.</p>
-              <a href="https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio" class="btn-link" target="_blank">RSVP / Learn More →</a>
-            </div>
-          </div>
+          {{EVENT_PREVIEW_CARDS}}
         </div>
         <div class="section-footer-link">
           <a href="events.html" class="btn btn-outline">View All Events &amp; Calendar →</a>
@@ -196,45 +167,10 @@
         <div class="section-header">
           <span class="eyebrow">Mission in Action</span>
           <h2>Our Endorsements</h2>
-          <p>NEBCD proudly endorses these candidates for the 2026 election cycle.</p>
+          <p>{{ENDORSEMENTS_INTRO}}</p>
         </div>
         <div class="endorsement-grid">
-          
-          <div class="endorsement-card">
-            <img src="assets/lindsey-saldana.webp" alt="Lindsey Saldana" class="candidate-photo" loading="lazy" />
-            <div class="candidate-info">
-              <h4>Lindsey Saldana</h4>
-              <p class="candidate-race">Alamo Heights ISD Board of Trustees — Place 3</p>
-              <a href="https://www.lindsey4ahisd.org/" class="btn-link" target="_blank">www.lindsey4ahisd.org/ →</a>
-            </div>
-          </div>
-
-          <div class="endorsement-card">
-            <img src="assets/bianca-cerqueria.webp" alt="Dr. Bianca Cerqueira" class="candidate-photo" loading="lazy" />
-            <div class="candidate-info">
-              <h4>Dr. Bianca Cerqueira</h4>
-              <p class="candidate-race">Alamo Heights ISD Board of Trustees — Place 4</p>
-              <a href="https://www.bianca4ahisd.org/" class="btn-link" target="_blank">www.bianca4ahisd.org/ →</a>
-            </div>
-          </div>
-
-          <div class="endorsement-card">
-            <img src="assets/mike-wulczyn.webp" alt="Mike Wulczyn" class="candidate-photo" loading="lazy" />
-            <div class="candidate-info">
-              <h4>Mike Wulczyn</h4>
-              <p class="candidate-race">NEISD Board of Trustees — District 3</p>
-              <a href="https://ilikemike.vote/" class="btn-link" target="_blank">ilikemike.vote/ →</a>
-            </div>
-          </div>
-
-          <div class="endorsement-card">
-            <img src="assets/caprice-garcia.webp" alt="Caprice Garcia" class="candidate-photo" loading="lazy" />
-            <div class="candidate-info">
-              <h4>Caprice Garcia</h4>
-              <p class="candidate-race">NEISD Board of Trustees — District 7</p>
-              <a href="https://www.capriceforneisd7.com/" class="btn-link" target="_blank">www.capriceforneisd7.com/ →</a>
-            </div>
-          </div>
+          {{ENDORSEMENT_PREVIEW_CARDS}}
         </div>
         <div class="section-footer-link">
           <a href="endorsements.html" class="btn btn-outline">View All Endorsements →</a>
@@ -255,7 +191,7 @@
             <div class="involve-icon">🗳️</div>
             <h3>Become a Member</h3>
             <p>Join NEBCD and help fund grassroots organizing across Northeast Bexar County. Dues go directly to voter outreach, canvassing, and candidate support.</p>
-            <a href="https://secure.actblue.com/donate/nebcddues" target="_blank" class="btn btn-blue">Join on ActBlue ↗</a>
+            <a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="btn btn-blue">Join on ActBlue ↗</a>
           </div>
           <div class="involve-card involve-card--volunteer">
             <div class="involve-icon">🙌</div>
@@ -267,7 +203,7 @@
             <div class="involve-icon">❤️</div>
             <h3>Donate</h3>
             <p>Every dollar helps us run more phonebanks, keep Campaign HQ open, and get more Democrats elected across Bexar County.</p>
-            <a href="https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1" target="_blank" class="btn btn-outline">Donate on ActBlue ↗</a>
+            <a href="{{ACTBLUE_DONATE_URL}}" target="_blank" class="btn btn-outline">Donate on ActBlue ↗</a>
           </div>
         </div>
       </div>
@@ -282,34 +218,7 @@
           <p>From courtrooms to cookouts — your neighbors showing up for democracy.</p>
         </div>
         <div class="gallery-grid">
-          
-          <div class="gallery-item gallery-item--tall">
-            <img src="assets/nebcd-event-music.webp" alt="Live music at an NEBCD community event" loading="lazy" />
-          </div>
-
-          <div class="gallery-item">
-            <img src="assets/nebcd-court-box.webp" alt="NEBCD members in the Bexar County courtroom gallery" loading="lazy" />
-          </div>
-
-          <div class="gallery-item">
-            <img src="assets/nebcd-judge-kazen.webp" alt="NEBCD members with Judge Kazen" loading="lazy" />
-          </div>
-
-          <div class="gallery-item gallery-item--wide">
-            <img src="assets/nebcd-key-court.webp" alt="NEBCD group at Bexar County Courthouse" loading="lazy" />
-          </div>
-
-          <div class="gallery-item">
-            <img src="assets/nebcd-judge-scharf-zeldes.webp" alt="NEBCD members with Judge Scharf-Zeldes" loading="lazy" />
-          </div>
-
-          <div class="gallery-item">
-            <img src="assets/nebcd-torres-group.webp" alt="NEBCD members at a community event" loading="lazy" />
-          </div>
-
-          <div class="gallery-item gallery-item--wide">
-            <img src="assets/nebcd-team-jp.webp" alt="NEBCD team members at an organizing event" loading="lazy" />
-          </div>
+          {{GALLERY_PHOTOS}}
         </div>
       </div>
     </section>
@@ -317,31 +226,31 @@
     <!-- VISIT US -->
     <section class="visit-section" id="visit">
       <div class="visit-photo-col">
-        <img src="assets/NEBCD-Office-Lausanne.webp" alt="Lausanne at the NEBCD Office on San Pedro Ave." loading="lazy" />
+        <img src="{{VISIT_PHOTO}}" alt="{{VISIT_PHOTO_ALT}}" loading="lazy" />
       </div>
       <div class="visit-content-col">
         <span class="eyebrow">Come See Us</span>
         <h2>Our Door Is Always Open</h2>
-        <p>Come by the NEBCD office. You'll be greeted by Madeleine and Ladybug the Pug. Check out our swag shop, say hi to Lausanne, and in the back you'll find Cameron — who can connect you with efforts in your area.</p>
+        <p>{{VISIT_DESCRIPTION}}</p>
         <div class="visit-details">
           <div class="visit-detail-item">
             <span class="detail-label">📍 Address</span>
-            <span class="detail-value">6521 San Pedro Ave.<br />San Antonio, TX 78216</span>
+            <span class="detail-value">{{OFFICE_ADDRESS_STREET}}<br />{{OFFICE_ADDRESS_CITY}}</span>
           </div>
           <div class="visit-detail-item">
             <span class="detail-label">📞 Phone</span>
-            <span class="detail-value"><a href="tel:2109171790">210-917-1790</a></span>
+            <span class="detail-value"><a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a></span>
           </div>
           <div class="visit-detail-item">
             <span class="detail-label">✉️ Email</span>
-            <span class="detail-value"><a href="mailto:info@nebcd.org">info@nebcd.org</a></span>
+            <span class="detail-value"><a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a></span>
           </div>
           <div class="visit-detail-item">
             <span class="detail-label">🕐 Hours</span>
-            <span class="detail-value">Mon–Tue &amp; Thu–Fri: 8 AM – 4 PM<br />Wednesday: 8 AM – 7 PM<br />Sat–Sun: Closed (except events)</span>
+            <span class="detail-value">{{OFFICE_HOURS_LINE1}}<br />{{OFFICE_HOURS_LINE2}}<br />{{OFFICE_HOURS_LINE3}}</span>
           </div>
         </div>
-        <a href="https://maps.google.com/?q=6521+San+Pedro+Ave+San+Antonio+TX+78216" target="_blank" class="btn btn-primary">Get Directions ↗</a>
+        <a href="{{OFFICE_DIRECTIONS_URL}}" target="_blank" class="btn btn-primary">Get Directions ↗</a>
       </div>
     </section>
 
@@ -366,13 +275,13 @@
       <div class="footer-social">
         <h4>Follow Us</h4>
         <div class="social-links">
-          <a href="https://www.facebook.com/NEBCD/" target="_blank" class="social-link">
+          <a href="{{FACEBOOK_URL}}" target="_blank" class="social-link">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Facebook
           </a>
-          <a href="https://www.instagram.com/nebcd_tx/" target="_blank" class="social-link">
+          <a href="{{INSTAGRAM_URL}}" target="_blank" class="social-link">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram
           </a>
-          <a href="https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1" target="_blank" class="social-link">
+          <a href="{{ACTBLUE_DONATE_URL}}" target="_blank" class="social-link">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg>Donate on ActBlue
           </a>
         </div>

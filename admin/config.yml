@@ -1,0 +1,145 @@
+local_backend: true
+
+backend:
+  name: github
+  repo: ryansalts/nebcd
+  branch: main
+  app_id: Ov23lixyYlkDDNfeg1Ao
+  base_url: nebcd-oauth.ryansalts.workers.dev
+
+media_folder: "assets"
+public_folder: "assets"
+
+collections:
+
+  # ── Events ────────────────────────────────────────────────────────────────
+  - name: "events"
+    label: "📅 Events"
+    label_singular: "Event"
+    description: "Add, edit, or remove events. Events are sorted by date automatically."
+    files:
+      - label: "Events List"
+        name: "events"
+        file: "_data/events.json"
+        fields:
+          - label: "Events"
+            name: "events"
+            widget: list
+            label_singular: "Event"
+            summary: "{{fields.date}} — {{fields.title}}"
+            fields:
+              - { label: "Event Title", name: title, widget: string }
+              - { label: "Date", name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "MMMM D, YYYY", time_format: false }
+              - { label: "Time", name: time, widget: string, hint: "e.g. 10:00 AM – Noon or 5:30 PM" }
+              - label: "Event Type"
+                name: type
+                widget: select
+                options:
+                  - { label: "Meeting", value: "Meeting" }
+                  - { label: "Volunteer", value: "Volunteer" }
+                  - { label: "Social", value: "Social" }
+                  - { label: "Election", value: "Election" }
+              - { label: "Location", name: location, widget: string, hint: "e.g. NEBCD Office — 6521 San Pedro Ave. or Zoom (link sent after RSVP)" }
+              - { label: "Description", name: description, widget: text }
+              - { label: "Button Label", name: button_label, widget: string, hint: "e.g. RSVP or Sign Up on Mobilize" }
+              - { label: "Button URL", name: button_url, widget: string, hint: "Use # if no URL yet" }
+              - label: "Featured on Homepage"
+                name: featured
+                widget: boolean
+                default: false
+                hint: "Show this event in the homepage preview (max 3 featured events shown)"
+
+  # ── Endorsements ──────────────────────────────────────────────────────────
+  - name: "endorsements"
+    label: "🗳️ Endorsements"
+    label_singular: "Endorsed Candidate"
+    description: "Add, edit, or remove endorsed candidates. Grouped automatically by election on the endorsements page."
+    files:
+      - label: "Endorsements List"
+        name: "endorsements"
+        file: "_data/endorsements.json"
+        fields:
+          - label: "Endorsed Candidates"
+            name: "endorsements"
+            widget: list
+            label_singular: "Candidate"
+            summary: "{{fields.name}} — {{fields.office}}"
+            fields:
+              - { label: "Candidate Name", name: name, widget: string }
+              - { label: "Office / Race", name: office, widget: string, hint: "e.g. NEISD Board of Trustees or Candidate for Attorney General" }
+              - { label: "Race Badge", name: race_badge, widget: string, required: false, hint: "Short label shown on card, e.g. District 3 or Place 4. Leave blank for runoff candidates." }
+              - label: "Election"
+                name: election
+                widget: select
+                options:
+                  - { label: "May 2nd Election", value: "may2" }
+                  - { label: "Primary Runoff", value: "runoff" }
+              - { label: "Race Group", name: race_group, widget: string, required: false, hint: "Groups candidates under a heading, e.g. North East ISD Board of Trustees. Leave blank for runoff candidates." }
+              - { label: "Photo", name: photo, widget: image, required: false, hint: "Upload candidate photo. Leave blank if unavailable." }
+              - { label: "Campaign Website", name: campaign_url, widget: string, required: false, hint: "Full URL including https://" }
+              - { label: "Co-Endorsers", name: co_endorsers, widget: string, required: false, hint: "Comma-separated list of other endorsing organizations" }
+              - { label: "Facebook URL", name: facebook_url, widget: string, required: false }
+              - { label: "Instagram URL", name: instagram_url, widget: string, required: false }
+              - label: "Featured on Homepage"
+                name: featured
+                widget: boolean
+                default: false
+                hint: "Show this candidate in the homepage endorsements preview (max 4 featured shown)"
+
+  # ── Site Settings ──────────────────────────────────────────────────────────
+  - name: "settings"
+    label: "⚙️ Site Settings"
+    description: "Office info, hours, hero image, social links, and ActBlue URLs."
+    files:
+      - label: "Office & Contact"
+        name: "office"
+        file: "_data/settings.json"
+        fields:
+          - { label: "Street Address", name: office_address_street, widget: string }
+          - { label: "City, State, ZIP", name: office_address_city, widget: string }
+          - { label: "Phone (display)", name: office_phone, widget: string, hint: "e.g. 210-917-1790" }
+          - { label: "Phone (href, digits only)", name: office_phone_href, widget: string, hint: "e.g. 2109171790" }
+          - { label: "Email", name: office_email, widget: string }
+          - { label: "Hours Line 1", name: office_hours_line1, widget: string, hint: "e.g. Mon–Tue & Thu–Fri: 8 AM – 4 PM" }
+          - { label: "Hours Line 2", name: office_hours_line2, widget: string, hint: "e.g. Wednesday: 8 AM – 7 PM" }
+          - { label: "Hours Line 3", name: office_hours_line3, widget: string, hint: "e.g. Sat–Sun: Closed (except events)" }
+          - { label: "Google Maps URL", name: office_directions_url, widget: string }
+          - { label: "Hero Image", name: hero_image, widget: image, hint: "Background photo for the homepage hero section" }
+          - { label: "Hero Image Alt Text", name: hero_image_alt, widget: string }
+          - { label: "Visit Section Photo", name: visit_photo, widget: image, hint: "Photo shown in the Visit Us section" }
+          - { label: "Visit Section Photo Alt Text", name: visit_photo_alt, widget: string }
+          - { label: "Visit Section Description", name: visit_description, widget: text }
+          - { label: "ActBlue Dues / Membership URL", name: actblue_dues_url, widget: string }
+          - { label: "ActBlue Donate URL", name: actblue_donate_url, widget: string }
+          - { label: "Facebook URL", name: facebook_url, widget: string }
+          - { label: "Instagram URL", name: instagram_url, widget: string }
+          - { label: "Mobilize Volunteer URL", name: mobilize_url, widget: string }
+          - { label: "Google Form ID (Volunteer)", name: volunteer_form_id, widget: string, hint: "The long ID from the Google Form embed URL" }
+          - { label: "Endorsements Cycle Label", name: endorsements_cycle_label, widget: string, hint: "e.g. 2026 — appears in page titles and headings" }
+          - { label: "Endorsements Intro", name: endorsements_intro, widget: text, hint: "Short intro shown on the homepage and endorsements page hero" }
+          - label: "Gallery Photos"
+            name: gallery_photos
+            widget: list
+            label_singular: "Photo"
+            summary: "{{fields.alt}}"
+            fields:
+              - { label: "Photo", name: src, widget: image }
+              - { label: "Alt Text", name: alt, widget: string }
+              - label: "Size"
+                name: size
+                widget: select
+                options:
+                  - { label: "Normal", value: "normal" }
+                  - { label: "Tall", value: "tall" }
+                  - { label: "Wide", value: "wide" }
+          - label: "Voting Resources"
+            name: voting_resources
+            widget: list
+            label_singular: "Resource"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Icon (emoji)", name: icon, widget: string, hint: "e.g. 🗳️" }
+              - { label: "Title", name: title, widget: string }
+              - { label: "Description", name: description, widget: text }
+              - { label: "Link Label", name: link_label, widget: string, hint: "e.g. bexar.org →" }
+              - { label: "URL", name: url, widget: string }

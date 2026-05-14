@@ -1,0 +1,63 @@
+{
+  "office_address_street": "6521 San Pedro Ave.",
+  "office_address_city": "San Antonio, TX 78216",
+  "office_phone": "210-917-1790",
+  "office_phone_href": "2109171790",
+  "office_email": "info@nebcd.org",
+  "office_hours_line1": "Mon–Tue & Thu–Fri: 8 AM – 4 PM",
+  "office_hours_line2": "Wednesday: 8 AM – 7 PM",
+  "office_hours_line3": "Sat–Sun: Closed (except events)",
+  "office_directions_url": "https://maps.google.com/?q=6521+San+Pedro+Ave+San+Antonio+TX+78216",
+  "hero_image": "assets/NEBCD-Office.webp",
+  "hero_image_alt": "NEBCD Office exterior",
+  "visit_photo": "assets/NEBCD-Office-Lausanne.webp",
+  "visit_photo_alt": "Lausanne at the NEBCD Office on San Pedro Ave.",
+  "visit_description": "Come by the NEBCD office. You'll be greeted by Madeleine and Ladybug the Pug. Check out our swag shop, say hi to Lausanne, and in the back you'll find Cameron — who can connect you with efforts in your area.",
+  "actblue_dues_url": "https://secure.actblue.com/donate/nebcddues",
+  "actblue_donate_url": "https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1",
+  "facebook_url": "https://www.facebook.com/NEBCD/",
+  "instagram_url": "https://www.instagram.com/nebcd_tx/",
+  "mobilize_url": "https://www.mobilize.us/nebcd/",
+  "volunteer_form_id": "1FAIpQLSdqfiOp32rsxjJu1g9HzbfaWHCIOLMafzeK87KnTbVryjMLmw",
+  "endorsements_cycle_label": "2026",
+  "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
+  "gallery_photos": [
+    { "src": "assets/nebcd-event-music.webp", "alt": "Live music at an NEBCD community event", "size": "tall" },
+    { "src": "assets/nebcd-court-box.webp", "alt": "NEBCD members in the Bexar County courtroom gallery", "size": "normal" },
+    { "src": "assets/nebcd-judge-kazen.webp", "alt": "NEBCD members with Judge Kazen", "size": "normal" },
+    { "src": "assets/nebcd-key-court.webp", "alt": "NEBCD group at Bexar County Courthouse", "size": "wide" },
+    { "src": "assets/nebcd-judge-scharf-zeldes.webp", "alt": "NEBCD members with Judge Scharf-Zeldes", "size": "normal" },
+    { "src": "assets/nebcd-torres-group.webp", "alt": "NEBCD members at a community event", "size": "normal" },
+    { "src": "assets/nebcd-team-jp.webp", "alt": "NEBCD team members at an organizing event", "size": "wide" }
+  ],
+  "voting_resources": [
+    {
+      "icon": "🗳️",
+      "title": "Check Your Registration",
+      "description": "Verify your voter registration, find your polling location, and view your individual sample ballot.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio"
+    },
+    {
+      "icon": "📋",
+      "title": "May 2nd Sample Ballot",
+      "description": "Review the generic sample ballot for the May 2nd election before heading to the polls.",
+      "link_label": "View PDF →",
+      "url": "https://www.bexar.org/DocumentCenter/View/4570/Generic-Sample-Ballot-PDF"
+    },
+    {
+      "icon": "📋",
+      "title": "May 26th Runoff Ballot",
+      "description": "Generic sample ballot for the May 26th Democratic Primary Runoff election.",
+      "link_label": "View PDF →",
+      "url": "https://www.bexar.org/DocumentCenter/View/14469/Generic-Sample-Ballot---Democratic-Party"
+    },
+    {
+      "icon": "🏛️",
+      "title": "Bexar County Elections",
+      "description": "Full information from the Bexar County Elections Department — early voting, locations, hours, and more.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/1568/Elections-Department"
+    }
+  ]
+}

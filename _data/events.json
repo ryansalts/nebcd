@@ -1,0 +1,59 @@
+{
+  "events": [
+    {
+      "title": "Monthly Membership Meeting",
+      "date": "2026-05-10",
+      "time": "10:00 AM – Noon",
+      "type": "Meeting",
+      "location": "NEBCD Office — 6521 San Pedro Ave.",
+      "description": "Our regular monthly gathering. Get updates on organizing efforts, meet new members, and find out where volunteers are needed most.",
+      "button_label": "RSVP",
+      "button_url": "#",
+      "featured": true
+    },
+    {
+      "title": "Wednesday Night Potluck",
+      "date": "2026-05-14",
+      "time": "5:30 PM",
+      "type": "Social",
+      "location": "NEBCD Office",
+      "description": "Bring a dish, meet your neighbors, and talk about what matters in our community. All are welcome.",
+      "button_label": "RSVP",
+      "button_url": "#",
+      "featured": false
+    },
+    {
+      "title": "Volunteer Phonebank — Primary Runoff",
+      "date": "2026-05-21",
+      "time": "5:30 PM",
+      "type": "Volunteer",
+      "location": "Zoom (link sent after RSVP)",
+      "description": "Help reach voters ahead of the May 26th Democratic Primary Runoff. No experience necessary — training provided.",
+      "button_label": "Sign Up on Mobilize",
+      "button_url": "https://www.mobilize.us/nebcd/",
+      "featured": true
+    },
+    {
+      "title": "Democratic Primary Runoff — Election Day",
+      "date": "2026-05-26",
+      "time": "Polls open 7 AM – 7 PM",
+      "type": "Election",
+      "location": "Your assigned polling location",
+      "description": "Vote in the Democratic Primary Runoff. Find your polling location, check your registration, and view your sample ballot before you go.",
+      "button_label": "Find Your Polling Place",
+      "button_url": "https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio",
+      "featured": true
+    },
+    {
+      "title": "Monthly Membership Meeting",
+      "date": "2026-06-14",
+      "time": "10:00 AM – Noon",
+      "type": "Meeting",
+      "location": "NEBCD Office — 6521 San Pedro Ave.",
+      "description": "Join us for our regular monthly meeting. All members and interested community members welcome.",
+      "button_label": "RSVP",
+      "button_url": "#",
+      "featured": false
+    }
+  ]
+}
