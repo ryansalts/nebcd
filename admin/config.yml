@@ -5,7 +5,7 @@ backend:
   repo: ryansalts/nebcd
   branch: main
   app_id: Ov23lixyYlkDDNfeg1Ao
-  base_url: nebcd-oauth.ryansalts.workers.dev
+  base_url: https://nebcd-oauth.ryansalts.workers.dev
 
 media_folder: "assets"
 public_folder: "assets"
