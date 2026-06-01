@@ -1,0 +1,53 @@
+{
+  "store_intro": "Everything you need to show up, speak out, and rep the blue — available in person at NEBCD Headquarters. All items are for pickup only; no shipping. We also carry yard signs for regional and national campaigns, often at a better price than ordering directly from the campaign.",
+  "products": [
+    {
+      "name": "T-Shirts",
+      "description": "Graphic and message tees for Democrats who have something to say. In-stock sizes available; special orders take approximately two weeks.",
+      "photo": "assets/nebcd-store-t-shirt-trump.jpg",
+      "available": true
+    },
+    {
+      "name": "Buttons & Pins",
+      "description": "A huge rotating selection of pinback buttons covering candidates, causes, and Democratic values. Something for everyone.",
+      "photo": "assets/nebcd-store-buttons.jpg",
+      "available": true
+    },
+    {
+      "name": "Historic Souvenir Buttons",
+      "description": "Vintage and collectible campaign buttons and stickers from past elections. A piece of Democratic history you can wear.",
+      "photo": "assets/nebcd-historic-buttons.jpg",
+      "available": true
+    },
+    {
+      "name": "Bumper Stickers",
+      "description": "A wide selection of bumper stickers — Texas Democrats, progressive messages, candidate stickers, and more.",
+      "photo": "assets/nebcd-store-bumper-stickers.jpg",
+      "available": true
+    },
+    {
+      "name": "Car Flags",
+      "description": "Wave your Democratic pride from the window. NEBCD car flags perfect for rallies, events, and everyday driving.",
+      "photo": "assets/nebcd-store-car-flags.jpg",
+      "available": true
+    },
+    {
+      "name": "Flags",
+      "description": "Full-size 3'×5' flags for your home, office, or event. Show the neighborhood where you stand.",
+      "photo": "assets/nebcd-store-flags.jpg",
+      "available": true
+    },
+    {
+      "name": "Earrings & Jewelry",
+      "description": "Patriotic and Democratic-themed earrings and accessories. A unique way to show your values.",
+      "photo": "assets/nebcd-store-earrings.jpg",
+      "available": true
+    },
+    {
+      "name": "Yard Signs",
+      "description": "Yard signs for regional and national campaigns — frequently available at a better price than ordering directly from the campaign. Ask us what's currently in stock.",
+      "photo": "assets/nebcd-store.jpg",
+      "available": true
+    }
+  ]
+}

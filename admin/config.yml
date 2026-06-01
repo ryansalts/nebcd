@@ -143,3 +143,88 @@ collections:
               - { label: "Description", name: description, widget: text }
               - { label: "Link Label", name: link_label, widget: string, hint: "e.g. bexar.org →" }
               - { label: "URL", name: url, widget: string }
+
+  # ── Store ──────────────────────────────────────────────────────────────────
+  - name: store
+    label: "🛍️ Store"
+    description: "Manage the store intro and product categories shown on the Store page."
+    files:
+      - name: store
+        label: Store Settings & Products
+        file: _data/store.json
+        fields:
+          - label: Store Intro
+            name: store_intro
+            widget: text
+            hint: "Shown in the page hero under the heading. One or two sentences describing the store."
+
+          - label: Products
+            name: products
+            widget: list
+            label_singular: Product
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Product Name", name: name, widget: string, hint: "e.g. T-Shirts, Bumper Stickers, Buttons & Pins" }
+              - { label: "Description", name: description, widget: text, hint: "One or two sentences describing this product category." }
+              - label: Photo
+                name: photo
+                widget: image
+                required: false
+                hint: "Upload a photo of this product. Use WebP format if possible."
+                media_folder: /assets
+                public_folder: assets
+              - label: "Available"
+                name: available
+                widget: boolean
+                default: true
+                hint: "Uncheck to hide this product from the page without deleting it."
+
+  # ── Sponsor ────────────────────────────────────────────────────────────────
+  - name: sponsor
+    label: "🤝 Sponsor"
+    description: "Manage the sponsor page intro and sponsorship details for each signature event."
+    files:
+      - name: sponsor
+        label: Sponsor Page
+        file: _data/sponsor.json
+        fields:
+          - label: Page Intro
+            name: sponsor_intro
+            widget: text
+            hint: "Shown in the page hero. One or two sentences about partnering with NEBCD."
+
+          - label: Sponsored Events
+            name: events
+            widget: list
+            label_singular: Event
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Event ID", name: id, widget: string, hint: "URL-safe slug, no spaces. e.g. dining-with-democrats — used for anchor links." }
+              - { label: "Event Name", name: name, widget: string, hint: "e.g. Dining with Democrats" }
+              - { label: "Eyebrow Label", name: eyebrow, widget: string, hint: "Small label above the event name. e.g. Signature Fundraiser" }
+              - { label: "Description", name: description, widget: text, hint: "A paragraph describing this event for potential sponsors." }
+              - { label: "Date", name: date, widget: string, required: false, hint: "e.g. Saturday, October 18, 2026. Leave blank if not yet confirmed." }
+              - { label: "Venue", name: venue, widget: string, required: false, hint: "Venue name and/or address. Leave blank if not yet confirmed." }
+              - { label: "Expected Attendance", name: attendance, widget: string, required: false, hint: "e.g. Expected 150–200 guests" }
+              - label: Event Photo
+                name: photo
+                widget: image
+                required: false
+                hint: "Optional photo for this event section."
+                media_folder: /assets
+                public_folder: assets
+              - label: Sponsorship Levels
+                name: tiers
+                widget: list
+                label_singular: "Sponsorship Level"
+                summary: "{{fields.name}}"
+                fields:
+                  - { label: "Level Name", name: name, widget: string, hint: "e.g. Presenting Sponsor, Gold Sponsor, Friend of NEBCD" }
+                  - label: Perks
+                    name: perks
+                    widget: list
+                    field:
+                      label: Perk
+                      name: perk
+                      widget: string
+                    hint: "One perk per line. Add as many as needed."

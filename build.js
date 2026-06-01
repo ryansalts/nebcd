@@ -3,12 +3,15 @@
 // Run: node build.js
 // GitHub Actions runs this on every push to main.
 
-const fs = require('fs');
+const fs    = require('fs');
+const https = require('https');
 
 // ── Load data ──────────────────────────────────────────────────────────────
 const settings    = JSON.parse(fs.readFileSync('_data/settings.json', 'utf8'));
 const events      = JSON.parse(fs.readFileSync('_data/events.json', 'utf8')).events;
 const endorsements = JSON.parse(fs.readFileSync('_data/endorsements.json', 'utf8')).endorsements;
+const storeData   = JSON.parse(fs.readFileSync('_data/store.json', 'utf8'));
+const sponsorData = JSON.parse(fs.readFileSync('_data/sponsor.json', 'utf8'));
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -58,10 +61,14 @@ function sortedEvents() {
   return [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date));
 }
 
-// Build the homepage event preview cards (featured=true events, max 3)
-function buildEventPreviewCards() {
+// Build the homepage event preview cards
+// CMS featured events take priority; Mobilize fills remaining slots up to 3
+function buildEventPreviewCards(mobilizeEvents) {
   const featured = sortedEvents().filter(e => e.featured).slice(0, 3);
-  return featured.map(e => `
+  const slotsLeft = 3 - featured.length;
+
+  // CMS cards
+  const cmsCards = featured.map(e => `
           <div class="event-card">
             <div class="event-date"><span class="event-month">${esc(formatMonthShort(e.date))}</span><span class="event-day">${formatDay(e.date)}</span></div>
             <div class="event-info">
@@ -70,7 +77,44 @@ function buildEventPreviewCards() {
               <p>${esc(e.description)}</p>
               <a href="${e.button_url === '#' ? 'events.html' : esc(e.button_url)}" class="btn-link"${e.button_url !== '#' && e.button_url.startsWith('http') ? ' target="_blank"' : ''}>RSVP / Learn More →</a>
             </div>
-          </div>`).join('\n');
+          </div>`);
+
+  // Mobilize fill cards (only if slots remain)
+  const mobilizeCards = slotsLeft > 0 && mobilizeEvents && mobilizeEvents.length
+    ? mobilizeEvents.slice(0, slotsLeft).map(evt => {
+        const slot      = evt.timeslots && evt.timeslots[0];
+        const dateObj   = slot ? new Date(slot.start_date * 1000) : null;
+        const monthShort = dateObj
+          ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: 'America/Chicago' }).toUpperCase()
+          : '—';
+        const dayNum    = dateObj
+          ? dateObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/Chicago' })
+          : '—';
+        const timeStr   = dateObj
+          ? dateObj.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+          : '';
+        const location  = evt.location
+          ? (evt.location.venue || evt.location.locality || 'See Mobilize for details')
+          : (evt.is_virtual ? 'Virtual / Online' : 'See Mobilize for details');
+
+        // Strip HTML tags and truncate to ~150 chars
+        const rawDesc   = evt.description ? evt.description.replace(/<[^>]+>/g, '').trim() : '';
+        const desc      = rawDesc.length > 150 ? rawDesc.slice(0, 147) + '…' : rawDesc;
+
+        return `
+          <div class="event-card">
+            <div class="event-date"><span class="event-month">${esc(monthShort)}</span><span class="event-day">${esc(dayNum)}</span></div>
+            <div class="event-info">
+              <h3>${esc(evt.title)}</h3>
+              <p class="event-meta">${timeStr ? esc(timeStr) + ' · ' : ''}${esc(location)}</p>
+              ${desc ? `<p>${esc(desc)}</p>` : ''}
+              <a href="${esc(evt.browser_url)}" target="_blank" class="btn-link">Sign Up on Mobilize →</a>
+            </div>
+          </div>`;
+      })
+    : [];
+
+  return [...cmsCards, ...mobilizeCards].join('\n');
 }
 
 // Build the full event list rows grouped by month (events.html)
@@ -303,6 +347,259 @@ function render(template, replacements) {
   return out;
 }
 
+// ── Mobilize helpers ───────────────────────────────────────────────────────
+
+// Fetch upcoming events from Mobilize public API (no key required)
+function fetchMobilizeEvents() {
+  return new Promise((resolve) => {
+    const url = 'https://api.mobilize.us/v1/organizations/50669/events?timeslot_start=gte_now&per_page=5&visibility=PUBLIC';
+    https.get(url, { headers: { 'User-Agent': 'NEBCD-build/1.0' } }, (res) => {
+      let raw = '';
+      res.on('data', chunk => raw += chunk);
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(raw).data || []);
+        } catch {
+          console.warn('  ⚠ Could not parse Mobilize API response — skipping section.');
+          resolve([]);
+        }
+      });
+    }).on('error', (err) => {
+      console.warn(`  ⚠ Mobilize API fetch failed (${err.message}) — skipping section.`);
+      resolve([]);
+    });
+  });
+}
+
+// Format a Unix timestamp as "Sat, Jun 14 · 10:00 AM"
+function formatMobilizeDate(ts) {
+  if (!ts) return '';
+  const d = new Date(ts * 1000);
+  return d.toLocaleString('en-US', {
+    weekday: 'short', month: 'short', day: 'numeric',
+    hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago',
+  });
+}
+
+// Map Mobilize event_type to NEBCD tag label + CSS class
+function mobilizeTagFromTypes(eventType) {
+  if (!eventType) return { label: 'Volunteer', cls: 'tag-volunteer' };
+  const map = {
+    'CANVASS':                    { label: 'Volunteer', cls: 'tag-volunteer' },
+    'PHONE_BANK':                 { label: 'Volunteer', cls: 'tag-volunteer' },
+    'TEXT_BANK':                  { label: 'Volunteer', cls: 'tag-volunteer' },
+    'VOTER_REG':                  { label: 'Volunteer', cls: 'tag-volunteer' },
+    'DOOR_KNOCK':                 { label: 'Volunteer', cls: 'tag-volunteer' },
+    'COMMUNITY_CANVASS':          { label: 'Volunteer', cls: 'tag-volunteer' },
+    'SIGNATURE_GATHERING':        { label: 'Volunteer', cls: 'tag-volunteer' },
+    'LETTER_WRITING':             { label: 'Volunteer', cls: 'tag-volunteer' },
+    'LITERATURE_DROP_OFF':        { label: 'Volunteer', cls: 'tag-volunteer' },
+    'AUTOMATED_PHONE_BANK':       { label: 'Volunteer', cls: 'tag-volunteer' },
+    'FRIEND_TO_FRIEND_OUTREACH':  { label: 'Volunteer', cls: 'tag-volunteer' },
+    'VOLUNTEER_SHIFT':            { label: 'Volunteer', cls: 'tag-volunteer' },
+    'MEETING':                    { label: 'Meeting',   cls: 'tag-meeting'   },
+    'TRAINING':                   { label: 'Meeting',   cls: 'tag-meeting'   },
+    'TOWN_HALL':                  { label: 'Meeting',   cls: 'tag-meeting'   },
+    'WORKSHOP':                   { label: 'Meeting',   cls: 'tag-meeting'   },
+    'BARNSTORM':                  { label: 'Meeting',   cls: 'tag-meeting'   },
+    'COMMUNITY':                  { label: 'Social',    cls: 'tag-social'    },
+    'SOCIAL':                     { label: 'Social',    cls: 'tag-social'    },
+    'MEET_GREET':                 { label: 'Social',    cls: 'tag-social'    },
+    'HOUSE_PARTY':                { label: 'Social',    cls: 'tag-social'    },
+    'FUNDRAISER':                 { label: 'Social',    cls: 'tag-social'    },
+    'RALLY':                      { label: 'Social',    cls: 'tag-social'    },
+    'DEBATE_WATCH_PARTY':         { label: 'Social',    cls: 'tag-social'    },
+    'OFFICE_OPENING':             { label: 'Social',    cls: 'tag-social'    },
+    'SOLIDARITY_EVENT':           { label: 'Social',    cls: 'tag-social'    },
+    'VISIBILITY_EVENT':           { label: 'Social',    cls: 'tag-social'    },
+  };
+  return map[eventType] || { label: 'Volunteer', cls: 'tag-volunteer' };
+}
+
+// Build the Mobilize events section HTML — reuses existing .event-row markup
+function buildMobilizeSection(mobilizeEvents) {
+  if (!mobilizeEvents.length) {
+    return `
+    <section class="mobilize-section">
+      <div class="container">
+        <h2 class="subsection-title">Volunteer Shifts on Mobilize</h2>
+        <p class="mobilize-intro">No upcoming shifts posted yet — check back soon or <a href="https://www.mobilize.us/nebcd/" target="_blank">visit our Mobilize page</a> directly.</p>
+      </div>
+    </section>`;
+  }
+
+  const rows = mobilizeEvents.slice(0, 5).map(evt => {
+    const slot       = evt.timeslots && evt.timeslots[0];
+    const startTs    = slot ? slot.start_date : null;
+    const dateObj    = startTs ? new Date(startTs * 1000) : null;
+    const monthShort = dateObj
+      ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: 'America/Chicago' }).toUpperCase()
+      : '—';
+    const dayNum     = dateObj
+      ? dateObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/Chicago' })
+      : '—';
+    const timeStr    = dateObj
+      ? dateObj.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+      : '';
+    const extraSlots = evt.timeslots && evt.timeslots.length > 1
+      ? ` +${evt.timeslots.length - 1} more time${evt.timeslots.length > 2 ? 's' : ''}`
+      : '';
+    const location   = evt.location
+      ? (evt.location.venue || evt.location.locality || 'See Mobilize for details')
+      : (evt.is_virtual ? 'Virtual / Online' : 'See Mobilize for details');
+
+    const tag        = mobilizeTagFromTypes(evt.event_type);
+
+    return `
+            <div class="event-row">
+              <div class="event-row-date"><span class="event-month">${esc(monthShort)}</span><span class="event-day">${esc(dayNum)}</span></div>
+              <div class="event-row-body">
+                <div class="event-row-header">
+                  <h4>${esc(evt.title)}</h4>
+                  <span class="event-tag ${tag.cls}">${tag.label}</span>
+                </div>
+                <p class="event-meta">${timeStr ? esc(timeStr + extraSlots) + ' · ' : ''}${esc(location)}</p>
+                <div class="event-row-actions">
+                  <a href="${esc(evt.browser_url)}" target="_blank" class="btn btn-blue btn-sm">Sign Up on Mobilize ↗</a>
+                </div>
+              </div>
+            </div>`;
+  }).join('\n');
+
+  return `
+    <section class="mobilize-section">
+      <div class="container">
+        <h2 class="subsection-title">Volunteer Shifts on Mobilize</h2>
+        <p class="mobilize-intro">Register directly for phonebanks, canvassing days, and other volunteer opportunities. Spots fill up — sign up early.</p>
+        <div class="events-list">
+          <div class="event-month-group">
+            ${rows}
+          </div>
+        </div>
+        <div class="section-footer-link" style="margin-top:1.5rem">
+          <a href="https://www.mobilize.us/nebcd/" target="_blank" class="btn btn-outline">View All Shifts on Mobilize ↗</a>
+        </div>
+      </div>
+    </section>`;
+}
+
+// ── Store helpers ──────────────────────────────────────────────────────────
+
+function buildStoreProductGrid() {
+  return storeData.products
+    .filter(p => p.available !== false)
+    .map(p => `
+          <div class="store-item-card">
+            <div class="store-item-img-wrap">
+              ${p.photo
+                ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy" />`
+                : `<div class="store-item-placeholder-img" aria-hidden="true">🛍️</div>`}
+            </div>
+            <div class="store-item-info">
+              <h3>${esc(p.name)}</h3>
+              <p>${esc(p.description)}</p>
+            </div>
+          </div>`).join('\n');
+}
+
+// ── Sponsor helpers ────────────────────────────────────────────────────────
+
+function buildSponsorEvents() {
+  return sponsorData.events.map((evt, i) => {
+    const isAlt = i % 2 !== 0;
+    const detailsHtml = [
+      evt.date     ? `<div class="sponsor-detail-item"><span class="detail-label">📅 When</span><span class="detail-value">${esc(evt.date)}</span></div>` : '',
+      evt.venue    ? `<div class="sponsor-detail-item"><span class="detail-label">📍 Where</span><span class="detail-value">${esc(evt.venue)}</span></div>` : '',
+      evt.attendance ? `<div class="sponsor-detail-item"><span class="detail-label">👥 Attendance</span><span class="detail-value">${esc(evt.attendance)}</span></div>` : '',
+    ].filter(Boolean).join('\n');
+
+    const tiersHtml = evt.tiers.map(tier => `
+              <div class="sponsor-tier">
+                <div class="tier-label">${esc(tier.name)}</div>
+                <ul class="tier-perks">
+                  ${tier.perks.map(p => `<li>${esc(p)}</li>`).join('\n                  ')}
+                </ul>
+              </div>`).join('\n');
+
+    const photoHtml = evt.photo
+      ? `<div class="sponsor-event-photo"><img src="${esc(evt.photo)}" alt="${esc(evt.name)}" loading="lazy" /></div>`
+      : '';
+
+    return `
+    <section class="sponsor-event-section${isAlt ? ' section-alt' : ''}" id="${esc(evt.id)}">
+      <div class="container">
+        <div class="sponsor-event-card">
+          ${photoHtml}
+          <div class="sponsor-event-header">
+            <span class="eyebrow">${esc(evt.eyebrow)}</span>
+            <h2>${esc(evt.name)}</h2>
+            <p class="sponsor-event-desc">${esc(evt.description)}</p>
+          </div>
+          ${detailsHtml ? `<div class="sponsor-event-details">${detailsHtml}</div>` : ''}
+          <div class="sponsor-tiers">
+            <h3>Sponsorship Levels</h3>
+            <div class="sponsor-tier-grid">
+              ${tiersHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>`;
+  }).join('\n');
+}
+
+// ── Main (async to support Mobilize API fetch) ─────────────────────────────
+async function main() {
+
+// ── Build endorsements.html ────────────────────────────────────────────────console.log('Building endorsements.html...');
+const endorsementsTemplate = fs.readFileSync('endorsements.template.html', 'utf8');
+const endorsementsHtml = render(endorsementsTemplate, {
+  ENDORSEMENTS_CYCLE_LABEL: esc(settings.endorsements_cycle_label),
+  ENDORSEMENTS_INTRO:       esc(settings.endorsements_intro),
+  ACTBLUE_DUES_URL:         esc(settings.actblue_dues_url),
+  ACTBLUE_DONATE_URL:       esc(settings.actblue_donate_url),
+  FACEBOOK_URL:             esc(settings.facebook_url),
+  INSTAGRAM_URL:            esc(settings.instagram_url),
+  MAY2_SECTION:             buildMay2Section(),
+  RUNOFF_SECTION:           buildRunoffSection(),
+  ENDORSEMENTS_SCHEMA:      buildEndorsementsSchema(),
+});
+fs.writeFileSync('endorsements.html', endorsementsHtml);
+console.log('  ✓ endorsements.html');
+
+// ── Build store.html ───────────────────────────────────────────────────────
+console.log('Building store.html...');
+const storeTemplate = fs.readFileSync('store.template.html', 'utf8');
+const storeHtml = render(storeTemplate, {
+  STORE_INTRO:         esc(storeData.store_intro),
+  STORE_PRODUCT_GRID:  buildStoreProductGrid(),
+  ACTBLUE_DUES_URL:    esc(settings.actblue_dues_url),
+  ACTBLUE_DONATE_URL:  esc(settings.actblue_donate_url),
+  FACEBOOK_URL:        esc(settings.facebook_url),
+  INSTAGRAM_URL:       esc(settings.instagram_url),
+});
+fs.writeFileSync('store.html', storeHtml);
+console.log('  ✓ store.html');
+
+// ── Build sponsor.html ─────────────────────────────────────────────────────
+console.log('Building sponsor.html...');
+const sponsorTemplate = fs.readFileSync('sponsor.template.html', 'utf8');
+const sponsorHtml = render(sponsorTemplate, {
+  SPONSOR_INTRO:       esc(sponsorData.sponsor_intro),
+  SPONSOR_EVENTS:      buildSponsorEvents(),
+  ACTBLUE_DUES_URL:    esc(settings.actblue_dues_url),
+  ACTBLUE_DONATE_URL:  esc(settings.actblue_donate_url),
+  FACEBOOK_URL:        esc(settings.facebook_url),
+  INSTAGRAM_URL:       esc(settings.instagram_url),
+});
+fs.writeFileSync('sponsor.html', sponsorHtml);
+console.log('  ✓ sponsor.html');
+
+// ── Fetch Mobilize events (async) ──────────────────────────────────────────
+console.log('Fetching Mobilize events...');
+const mobilizeEvents = await fetchMobilizeEvents();
+console.log(`  ✓ ${mobilizeEvents.length} Mobilize event(s) fetched`);
+
 // ── Build index.html ───────────────────────────────────────────────────────
 console.log('Building index.html...');
 const indexTemplate = fs.readFileSync('index.template.html', 'utf8');
@@ -326,7 +623,7 @@ const indexHtml = render(indexTemplate, {
   FACEBOOK_URL:            esc(settings.facebook_url),
   INSTAGRAM_URL:           esc(settings.instagram_url),
   ENDORSEMENTS_INTRO:      esc(settings.endorsements_intro),
-  EVENT_PREVIEW_CARDS:     buildEventPreviewCards(),
+  EVENT_PREVIEW_CARDS:     buildEventPreviewCards(mobilizeEvents),
   ENDORSEMENT_PREVIEW_CARDS: buildEndorsementPreviewCards(),
   GALLERY_PHOTOS:          buildGalleryPhotos(),
 });
@@ -344,25 +641,13 @@ const eventsHtml = render(eventsTemplate, {
   EVENT_LIST_ROWS:         buildEventListRows(),
   VOTING_RESOURCE_CARDS:   buildVotingResourceCards(),
   EVENTS_SCHEMA:           buildEventsSchema(),
+  MOBILIZE_SECTION:        buildMobilizeSection(mobilizeEvents),
 });
 fs.writeFileSync('events.html', eventsHtml);
 console.log('  ✓ events.html');
 
-// ── Build endorsements.html ────────────────────────────────────────────────
-console.log('Building endorsements.html...');
-const endorsementsTemplate = fs.readFileSync('endorsements.template.html', 'utf8');
-const endorsementsHtml = render(endorsementsTemplate, {
-  ENDORSEMENTS_CYCLE_LABEL: esc(settings.endorsements_cycle_label),
-  ENDORSEMENTS_INTRO:       esc(settings.endorsements_intro),
-  ACTBLUE_DUES_URL:         esc(settings.actblue_dues_url),
-  ACTBLUE_DONATE_URL:       esc(settings.actblue_donate_url),
-  FACEBOOK_URL:             esc(settings.facebook_url),
-  INSTAGRAM_URL:            esc(settings.instagram_url),
-  MAY2_SECTION:             buildMay2Section(),
-  RUNOFF_SECTION:           buildRunoffSection(),
-  ENDORSEMENTS_SCHEMA:      buildEndorsementsSchema(),
-});
-fs.writeFileSync('endorsements.html', endorsementsHtml);
-console.log('  ✓ endorsements.html');
-
 console.log('\nBuild complete.');
+
+} // end main()
+
+main().catch(err => { console.error('Build failed:', err); process.exit(1); });

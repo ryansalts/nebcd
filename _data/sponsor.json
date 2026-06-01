@@ -1,0 +1,113 @@
+{
+  "sponsor_intro": "Partner with the North East Bexar County Democrats and put your name in front of hundreds of engaged, civically active community members across Northeast San Antonio and Bexar County.",
+  "events": [
+    {
+      "id": "dining-with-democrats",
+      "name": "Dining with Democrats",
+      "eyebrow": "Signature Fundraiser",
+      "description": "Our premier annual fundraising dinner brings together Democratic leaders, candidates, elected officials, and community members for an evening of great food, inspiring speakers, and Democratic camaraderie. This is NEBCD's highest-profile event of the year.",
+      "date": "",
+      "venue": "",
+      "attendance": "Expected 100–200 guests",
+      "photo": "assets/nebcd-dining-with-dems.jpg",
+      "tiers": [
+        {
+          "name": "Presenting Sponsor",
+          "perks": [
+            "Premier logo placement on all event materials",
+            "Named as presenting sponsor in all promotions",
+            "Recognized from the podium during the event",
+            "Reserved table for your guests",
+            "Featured in pre-event email to full membership",
+            "Social media spotlight post"
+          ]
+        },
+        {
+          "name": "Gold Sponsor",
+          "perks": [
+            "Logo on event signage and printed program",
+            "Complimentary tickets for your team",
+            "Recognized from the podium during the event",
+            "Featured in pre-event email to full membership",
+            "Social media mention"
+          ]
+        },
+        {
+          "name": "Silver Sponsor",
+          "perks": [
+            "Logo on event signage and printed program",
+            "Complimentary tickets for your team",
+            "Listed in post-event email to membership",
+            "Social media mention"
+          ]
+        },
+        {
+          "name": "Bronze Sponsor",
+          "perks": [
+            "Name listed in event program",
+            "Complimentary tickets",
+            "Thank-you on NEBCD social media"
+          ]
+        },
+        {
+          "name": "Friend of NEBCD",
+          "perks": [
+            "Name listed in event program",
+            "Thank-you on NEBCD social media"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "labor-day-picnic",
+      "name": "Annual Labor Day Picnic",
+      "eyebrow": "Community Event",
+      "description": "A beloved NEBCD tradition — our Labor Day Picnic is a free community celebration bringing together families, labor allies, local leaders, and Democratic activists for food, fun, and fellowship. One of the most well-attended events on the Northeast San Antonio Democratic calendar.",
+      "date": "",
+      "venue": "",
+      "attendance": "Free, family-friendly community event",
+      "photo": "",
+      "tiers": [
+        {
+          "name": "Presenting Sponsor",
+          "perks": [
+            "Named as presenting sponsor in all promotions",
+            "Premier banner placement at the event",
+            "Logo on event flyers, social posts, and emails",
+            "Opportunity to set up a table or booth",
+            "Verbal recognition throughout the event"
+          ]
+        },
+        {
+          "name": "Gold Sponsor",
+          "perks": [
+            "Logo on event signage and social media",
+            "Listed in all event promotions and emails",
+            "Opportunity to set up a table or booth"
+          ]
+        },
+        {
+          "name": "Silver Sponsor",
+          "perks": [
+            "Logo on event signage",
+            "Listed in event promotions",
+            "Thank-you on NEBCD social media"
+          ]
+        },
+        {
+          "name": "Bronze Sponsor",
+          "perks": [
+            "Name listed on event signage",
+            "Thank-you on NEBCD social media"
+          ]
+        },
+        {
+          "name": "Friend of NEBCD",
+          "perks": [
+            "Name listed on event signage"
+          ]
+        }
+      ]
+    }
+  ]
+}
