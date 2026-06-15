@@ -37,6 +37,8 @@ Volunteer Signup (Mobilize): https://www.mobilize.us/nebcd/
 /events       — Current events list and Google Calendar embed. Meetings, phonebanks, canvassing, election days, and voting resources for Bexar County.
 /endorsements — NEBCD's current endorsed candidates for active Bexar County election cycles. Updated each election season.
 /volunteer    — Volunteer intake. Ways to help: phonebanks, canvassing, data/admin, events. Google Form intake.
+/store        — In-person merchandise at NEBCD HQ. T-shirts, yard signs, bumper stickers, buttons, flags, earrings. Pickup only at 6521 San Pedro Ave.
+/sponsor      — Sponsorship opportunities for NEBCD signature events — Dining with Democrats and the Annual Labor Day Picnic.
 /terms        — SMS Terms & Conditions for NEBCD text messaging program. (noindex)
 /privacy      — 10DLC Privacy Policy for NEBCD SMS and digital communications. (noindex)
 
