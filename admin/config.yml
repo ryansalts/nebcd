@@ -72,8 +72,9 @@ collections:
                 name: election
                 widget: select
                 options:
-                  - { label: "May 2nd Election", value: "may2" }
-                  - { label: "Primary Runoff", value: "runoff" }
+                  - { label: "General Election", value: "general" }
+                  - { label: "Primary", value: "primary" }
+                  - { label: "Runoff", value: "runoff" }
               - { label: "Race Group", name: race_group, widget: string, required: false, hint: "Groups candidates under a heading, e.g. North East ISD Board of Trustees. Leave blank for runoff candidates." }
               - { label: "Photo", name: photo, widget: image, required: false, hint: "Upload candidate photo. Leave blank if unavailable." }
               - { label: "Campaign Website", name: campaign_url, widget: string, required: false, hint: "Full URL including https://" }

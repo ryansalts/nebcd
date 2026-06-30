@@ -239,7 +239,7 @@ function buildEndorsementPreviewCards() {
           </div>`).join('\n');
 }
 
-// Full candidate card for endorsements.html (May 2nd candidates)
+// Full candidate card for endorsements.html
 function buildCandidateCard(e) {
   const socialLinks = [
     e.facebook_url ? `<a href="${esc(e.facebook_url)}" target="_blank" class="social-icon-link" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>` : '',
@@ -264,14 +264,14 @@ function buildCandidateCard(e) {
               </div>`;
 }
 
-// Build May 2nd section grouped by race_group
-function buildMay2Section() {
-  const may2 = endorsements.filter(e => e.election === 'may2');
-  if (!may2.length) return '';
+// Build General Election section grouped by race_group
+function buildGeneralSection() {
+  const general = endorsements.filter(e => e.election === 'general');
+  if (!general.length) return '';
 
   // Group by race_group
   const groups = {};
-  may2.forEach(e => {
+  general.forEach(e => {
     const key = e.race_group || e.office;
     if (!groups[key]) groups[key] = [];
     groups[key].push(e);
@@ -286,9 +286,39 @@ function buildMay2Section() {
           </div>`).join('\n');
 
   return `
-        <div class="election-group" id="may2">
+        <div class="election-group" id="general">
           <div class="election-group-header">
-            <h2>May 2nd Election</h2>
+            <h2>General Election</h2>
+          </div>
+          ${raceSections}
+        </div>`;
+}
+
+// Build Primary section grouped by race_group
+function buildPrimarySection() {
+  const primary = endorsements.filter(e => e.election === 'primary');
+  if (!primary.length) return '';
+
+  // Group by race_group
+  const groups = {};
+  primary.forEach(e => {
+    const key = e.race_group || e.office;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(e);
+  });
+
+  const raceSections = Object.entries(groups).map(([group, candidates]) => `
+          <div class="election-race">
+            <h3 class="race-label">${esc(group)}</h3>
+            <div class="candidate-grid">
+              ${candidates.map(buildCandidateCard).join('\n')}
+            </div>
+          </div>`).join('\n');
+
+  return `
+        <div class="election-group" id="primary">
+          <div class="election-group-header">
+            <h2>Primary Election</h2>
           </div>
           ${raceSections}
         </div>`;
@@ -560,7 +590,8 @@ const endorsementsHtml = render(endorsementsTemplate, {
   ACTBLUE_DONATE_URL:       esc(settings.actblue_donate_url),
   FACEBOOK_URL:             esc(settings.facebook_url),
   INSTAGRAM_URL:            esc(settings.instagram_url),
-  MAY2_SECTION:             buildMay2Section(),
+  GENERAL_SECTION:          buildGeneralSection(),
+  PRIMARY_SECTION:          buildPrimarySection(),
   RUNOFF_SECTION:           buildRunoffSection(),
   ENDORSEMENTS_SCHEMA:      buildEndorsementsSchema(),
 });
