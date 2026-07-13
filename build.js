@@ -82,7 +82,8 @@ function buildEventPreviewCards(mobilizeEvents) {
   // Mobilize fill cards (only if slots remain)
   const mobilizeCards = slotsLeft > 0 && mobilizeEvents && mobilizeEvents.length
     ? mobilizeEvents.slice(0, slotsLeft).map(evt => {
-        const slot      = evt.timeslots && evt.timeslots[0];
+        const now       = Math.floor(Date.now() / 1000);
+        const slot      = evt.timeslots && (evt.timeslots.find(s => s.start_date >= now) || evt.timeslots[0]);
         const dateObj   = slot ? new Date(slot.start_date * 1000) : null;
         const monthShort = dateObj
           ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: 'America/Chicago' }).toUpperCase()
@@ -459,7 +460,8 @@ function buildMobilizeSection(mobilizeEvents) {
   }
 
   const rows = mobilizeEvents.slice(0, 5).map(evt => {
-    const slot       = evt.timeslots && evt.timeslots[0];
+    const now        = Math.floor(Date.now() / 1000);
+    const slot       = evt.timeslots && (evt.timeslots.find(s => s.start_date >= now) || evt.timeslots[0]);
     const startTs    = slot ? slot.start_date : null;
     const dateObj    = startTs ? new Date(startTs * 1000) : null;
     const monthShort = dateObj
