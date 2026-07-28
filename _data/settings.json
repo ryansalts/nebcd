@@ -1,22 +1,5 @@
 {
-  "office_address_street": "6521 San Pedro Ave.",
-  "office_address_city": "San Antonio, TX 78216",
-  "office_phone": "210-917-1790",
-  "office_phone_href": "2109171790",
-  "office_email": "info@nebcd.org",
-  "office_hours_line1": "Mon–Tue & Thu–Fri: 8 AM – 4 PM",
-  "office_hours_line2": "Wednesday: 8 AM – 7 PM",
-  "office_hours_line3": "Sat–Sun: Closed (except events)",
-  "office_directions_url": "https://maps.google.com/?q=6521+San+Pedro+Ave+San+Antonio+TX+78216",
-  "hero_image": "assets/NEBCD-Office.webp",
   "hero_image_alt": "NEBCD Office exterior",
-  "visit_photo": "assets/NEBCD-Office-Lausanne.webp",
-  "visit_photo_alt": "Lausanne at the NEBCD Office on San Pedro Ave.",
-  "visit_description": "Come by the NEBCD office. You'll be greeted by Madeleine and Ladybug the Pug. Check out our swag shop, say hi to Lausanne, and in the back you'll find Cameron — who can connect you with efforts in your area.",
-  "actblue_dues_url": "https://secure.actblue.com/donate/nebcddues",
-  "actblue_donate_url": "https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1",
-  "facebook_url": "https://www.facebook.com/NEBCD/",
-  "instagram_url": "https://www.instagram.com/nebcd_tx/",
   "mobilize_url": "https://www.mobilize.us/nebcd/",
   "volunteer_form_id": "1FAIpQLSdqfiOp32rsxjJu1g9HzbfaWHCIOLMafzeK87KnTbVryjMLmw",
   "endorsements_cycle_label": "2026",
@@ -30,6 +13,15 @@
     { "src": "assets/nebcd-torres-group.webp", "alt": "NEBCD members at a community event", "size": "normal" },
     { "src": "assets/nebcd-monique-diaz-group.webp", "alt": "NEBCD team members with Judge Monique Diaz", "size": "wide" }
   ],
+  "actblue_dues_url": "https://secure.actblue.com/donate/nebcddues",
+  "instagram_url": "https://www.instagram.com/nebcd_tx/",
+  "office_directions_url": "https://maps.google.com/?q=6521+San+Pedro+Ave+San+Antonio+TX+78216",
+  "visit_photo_alt": "Lausanne at the NEBCD Office on San Pedro Ave.",
+  "visit_description": "Come by the NEBCD office. You'll be greeted by Madeleine and Ladybug the Pug. Check out our swag shop, say hi to Lausanne, and in the back you'll find Cameron — who can connect you with efforts in your area.",
+  "office_hours_line1": "Mon–Tue & Thu–Fri: 8 AM – 4 PM",
+  "office_hours_line2": "Wednesday: 8 AM – 7 PM",
+  "office_phone": "210-917-1790",
+  "office_hours_line3": "Sat–Sun: Closed (except events)",
   "voting_resources": [
     {
       "icon": "🗳️",
@@ -40,17 +32,17 @@
     },
     {
       "icon": "📋",
-      "title": "May 2nd Sample Ballot",
-      "description": "Review the generic sample ballot for the May 2nd election before heading to the polls.",
-      "link_label": "View PDF →",
-      "url": "https://www.bexar.org/DocumentCenter/View/4570/Generic-Sample-Ballot-PDF"
+      "title": "Vote by Mail",
+      "description": "Find out if you're eligible to vote by mail, download the application, and track your ballot status.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/3271/Vote-by-Mail"
     },
     {
       "icon": "📋",
-      "title": "May 26th Runoff Ballot",
-      "description": "Generic sample ballot for the May 26th Democratic Primary Runoff election.",
-      "link_label": "View PDF →",
-      "url": "https://www.bexar.org/DocumentCenter/View/14469/Generic-Sample-Ballot---Democratic-Party"
+      "title": "League of Women Voters Guide",
+      "description": "Nonpartisan candidate info from the League of Women Voters. Read candidates' answers in their own words before you vote.",
+      "link_label": "lwvsa.org →",
+      "url": "https://lwvsa.org/"
     },
     {
       "icon": "🏛️",
@@ -59,5 +51,51 @@
       "link_label": "bexar.org →",
       "url": "https://www.bexar.org/1568/Elections-Department"
     }
-  ]
+  ],
+  "gallery_photos": [
+    {
+      "src": "assets/nebcd-event-music.webp",
+      "alt": "Live music at an NEBCD community event",
+      "size": "tall"
+    },
+    {
+      "src": "assets/nebcd-court-box.webp",
+      "alt": "NEBCD members in the Bexar County courtroom gallery",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-judge-kazen.webp",
+      "alt": "NEBCD members with Judge Kazen",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-key-court.webp",
+      "alt": "NEBCD group at Bexar County Courthouse",
+      "size": "wide"
+    },
+    {
+      "src": "assets/nebcd-judge-scharf-zeldes.webp",
+      "alt": "NEBCD members with Judge Scharf-Zeldes",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-torres-group.webp",
+      "alt": "NEBCD members at a community event",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-monique-diaz-group.jpg",
+      "alt": "NEBCD team members with Judge Monique Diaz",
+      "size": "wide"
+    }
+  ],
+  "office_address_street": "6521 San Pedro Ave.",
+  "actblue_donate_url": "https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1",
+  "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
+  "facebook_url": "https://www.facebook.com/NEBCD/",
+  "hero_image": "assets/NEBCD-Office.webp",
+  "office_email": "info@nebcd.org",
+  "office_address_city": "San Antonio, TX 78216",
+  "visit_photo": "assets/NEBCD-Office-Lausanne.webp",
+  "office_phone_href": "2109171790"
 }
