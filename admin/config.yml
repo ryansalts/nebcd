@@ -96,6 +96,19 @@ collections:
         name: "office"
         file: "_data/settings.json"
         fields:
+          - label: "🎉 Fundraiser Callout (Homepage + Events Page)"
+            name: fundraiser
+            widget: object
+            hint: "Toggle on to show a fundraiser callout card on the homepage and Events page. Toggle off to hide it on both without losing the content."
+            fields:
+              - { label: "Show Callout", name: enabled, widget: boolean, default: false, hint: "Turn this on when a fundraiser is active — turn it off when it's over. Updates both pages at once." }
+              - { label: "Eyebrow Label", name: eyebrow, widget: string, default: "Fundraiser", hint: "Small label above the headline, e.g. Fundraiser or Save the Date" }
+              - { label: "Headline", name: headline, widget: string, hint: "e.g. Dining with Democrats 2026" }
+              - { label: "Description", name: description, widget: text, hint: "A sentence or two about the event and what it supports." }
+              - { label: "Photo", name: photo, widget: image, required: false }
+              - { label: "Photo Alt Text", name: photo_alt, widget: string, required: false }
+              - { label: "Button Label", name: button_label, widget: string, hint: "e.g. Get Tickets → or Sponsor This Event →" }
+              - { label: "Button URL", name: button_url, widget: string, hint: "Ticket link, ActBlue page, or sponsor.html" }
           - { label: "Street Address", name: office_address_street, widget: string }
           - { label: "City, State, ZIP", name: office_address_city, widget: string }
           - { label: "Phone (display)", name: office_phone, widget: string, hint: "e.g. 210-917-1790" }

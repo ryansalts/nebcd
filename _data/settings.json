@@ -1,17 +1,55 @@
 {
+  "fundraiser": {
+    "enabled": true,
+    "eyebrow": "Fundraiser",
+    "headline": "27th Annual Labor Day Picnic",
+    "description": "North East Bexar County Democrats (NEBCD) is holding its 27th Annual Labor Day Picnic to celebrate the contributions of all of us who work for our families and communities every day. Former Mayor Ron Nirenberg will be the featured speaker. NEBCD will honor a Labor Woman and Labor Man of the Year who have given a life time of service to unions for the advancement of all workers. Jim Chesnut, local indie musical artist, will perform.",
+    "photo": "assets/nebcd-nancy-event.webp",
+    "photo_alt": "Guests at a past Dining with Democrats fundraiser",
+    "button_label": "Get Tickets →",
+    "button_url": "https://secure.actblue.com/donate/2026ldp"
+  },
   "hero_image_alt": "NEBCD Office exterior",
   "mobilize_url": "https://www.mobilize.us/nebcd/",
   "volunteer_form_id": "1FAIpQLSdqfiOp32rsxjJu1g9HzbfaWHCIOLMafzeK87KnTbVryjMLmw",
   "endorsements_cycle_label": "2026",
   "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
   "gallery_photos": [
-    { "src": "assets/nebcd-event-music.webp", "alt": "Live music at an NEBCD community event", "size": "tall" },
-    { "src": "assets/nebcd-court-box.webp", "alt": "NEBCD members in the Bexar County courtroom gallery", "size": "normal" },
-    { "src": "assets/nebcd-judge-kazen.webp", "alt": "NEBCD members with Judge Kazen", "size": "normal" },
-    { "src": "assets/nebcd-key-court.webp", "alt": "NEBCD group at Bexar County Courthouse", "size": "wide" },
-    { "src": "assets/nebcd-judge-scharf-zeldes.webp", "alt": "NEBCD members with Judge Scharf-Zeldes", "size": "normal" },
-    { "src": "assets/nebcd-torres-group.webp", "alt": "NEBCD members at a community event", "size": "normal" },
-    { "src": "assets/nebcd-monique-diaz-group.webp", "alt": "NEBCD team members with Judge Monique Diaz", "size": "wide" }
+    {
+      "src": "assets/nebcd-event-music.webp",
+      "alt": "Live music at an NEBCD community event",
+      "size": "tall"
+    },
+    {
+      "src": "assets/nebcd-court-box.webp",
+      "alt": "NEBCD members in the Bexar County courtroom gallery",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-judge-kazen.webp",
+      "alt": "NEBCD members with Judge Kazen",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-key-court.webp",
+      "alt": "NEBCD group at Bexar County Courthouse",
+      "size": "wide"
+    },
+    {
+      "src": "assets/nebcd-judge-scharf-zeldes.webp",
+      "alt": "NEBCD members with Judge Scharf-Zeldes",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-torres-group.webp",
+      "alt": "NEBCD members at a community event",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-monique-diaz-group.webp",
+      "alt": "NEBCD team members with Judge Monique Diaz",
+      "size": "wide"
+    }
   ],
   "actblue_dues_url": "https://secure.actblue.com/donate/nebcddues",
   "instagram_url": "https://www.instagram.com/nebcd_tx/",
@@ -52,46 +90,8 @@
       "url": "https://www.bexar.org/1568/Elections-Department"
     }
   ],
-  "gallery_photos": [
-    {
-      "src": "assets/nebcd-event-music.webp",
-      "alt": "Live music at an NEBCD community event",
-      "size": "tall"
-    },
-    {
-      "src": "assets/nebcd-court-box.webp",
-      "alt": "NEBCD members in the Bexar County courtroom gallery",
-      "size": "normal"
-    },
-    {
-      "src": "assets/nebcd-judge-kazen.webp",
-      "alt": "NEBCD members with Judge Kazen",
-      "size": "normal"
-    },
-    {
-      "src": "assets/nebcd-key-court.webp",
-      "alt": "NEBCD group at Bexar County Courthouse",
-      "size": "wide"
-    },
-    {
-      "src": "assets/nebcd-judge-scharf-zeldes.webp",
-      "alt": "NEBCD members with Judge Scharf-Zeldes",
-      "size": "normal"
-    },
-    {
-      "src": "assets/nebcd-torres-group.webp",
-      "alt": "NEBCD members at a community event",
-      "size": "normal"
-    },
-    {
-      "src": "assets/nebcd-monique-diaz-group.webp",
-      "alt": "NEBCD team members with Judge Monique Diaz",
-      "size": "wide"
-    }
-  ],
   "office_address_street": "6521 San Pedro Ave.",
   "actblue_donate_url": "https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1",
-  "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
   "facebook_url": "https://www.facebook.com/NEBCD/",
   "hero_image": "assets/NEBCD-Office.webp",
   "office_email": "info@nebcd.org",

@@ -515,6 +515,35 @@ function buildMobilizeSection(mobilizeEvents) {
     </section>`;
 }
 
+// ── Fundraiser helpers ─────────────────────────────────────────────────────
+
+// Admin-toggled fundraiser callout, shared by the homepage and Events page.
+// Returns '' (nothing rendered) when settings.fundraiser.enabled is false/missing.
+function buildFundraiserSection() {
+  const f = settings.fundraiser;
+  if (!f || !f.enabled) return '';
+
+  const photoHtml = f.photo
+    ? `<img src="${esc(f.photo)}" alt="${esc(f.photo_alt || f.headline || '')}" class="fundraiser-photo" loading="lazy" />`
+    : '';
+
+  return `
+    <!-- FUNDRAISER CALLOUT (admin-toggled via CMS: Site Settings → Fundraiser Callout) -->
+    <section class="fundraiser-callout" id="fundraiser">
+      <div class="container">
+        <div class="fundraiser-card">
+          ${photoHtml ? `<div class="fundraiser-photo-col">${photoHtml}</div>` : ''}
+          <div class="fundraiser-content-col">
+            <span class="eyebrow">${esc(f.eyebrow || 'Fundraiser')}</span>
+            <h2>${esc(f.headline)}</h2>
+            <p>${esc(f.description)}</p>
+            ${f.button_url ? `<a href="${esc(f.button_url)}"${f.button_url.startsWith('http') ? ' target="_blank"' : ''} class="btn btn-blue">${esc(f.button_label || 'Learn More →')}</a>` : ''}
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+
 // ── Store helpers ──────────────────────────────────────────────────────────
 
 function buildStoreProductGrid() {
@@ -592,6 +621,7 @@ const endorsementsHtml = render(endorsementsTemplate, {
   ACTBLUE_DONATE_URL:       esc(settings.actblue_donate_url),
   FACEBOOK_URL:             esc(settings.facebook_url),
   INSTAGRAM_URL:            esc(settings.instagram_url),
+  VOTING_RESOURCE_CARDS:    buildVotingResourceCards(),
   GENERAL_SECTION:          buildGeneralSection(),
   PRIMARY_SECTION:          buildPrimarySection(),
   RUNOFF_SECTION:           buildRunoffSection(),
@@ -659,6 +689,7 @@ const indexHtml = render(indexTemplate, {
   EVENT_PREVIEW_CARDS:     buildEventPreviewCards(mobilizeEvents),
   ENDORSEMENT_PREVIEW_CARDS: buildEndorsementPreviewCards(),
   GALLERY_PHOTOS:          buildGalleryPhotos(),
+  FUNDRAISER_SECTION:      buildFundraiserSection(),
 });
 fs.writeFileSync('index.html', indexHtml);
 console.log('  ✓ index.html');
@@ -672,9 +703,9 @@ const eventsHtml = render(eventsTemplate, {
   FACEBOOK_URL:            esc(settings.facebook_url),
   INSTAGRAM_URL:           esc(settings.instagram_url),
   EVENT_LIST_ROWS:         buildEventListRows(),
-  VOTING_RESOURCE_CARDS:   buildVotingResourceCards(),
   EVENTS_SCHEMA:           buildEventsSchema(),
   MOBILIZE_SECTION:        buildMobilizeSection(mobilizeEvents),
+  FUNDRAISER_SECTION:      buildFundraiserSection(),
 });
 fs.writeFileSync('events.html', eventsHtml);
 console.log('  ✓ events.html');
