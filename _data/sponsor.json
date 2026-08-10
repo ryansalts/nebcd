@@ -2,14 +2,11 @@
   "sponsor_intro": "Partner with the North East Bexar County Democrats and put your name in front of hundreds of engaged, civically active community members across Northeast San Antonio and Bexar County.",
   "events": [
     {
-      "id": "dining-with-democrats",
-      "name": "Dining with Democrats",
+      "attendance": "Expected 100–200 guests",
       "eyebrow": "Signature Fundraiser",
-      "description": "Our premier annual fundraising dinner brings together Democratic leaders, candidates, elected officials, and community members for an evening of great food, inspiring speakers, and Democratic camaraderie. This is NEBCD's highest-profile event of the year.",
+      "name": "Dining with Democrats",
       "date": "",
       "venue": "",
-      "attendance": "Expected 100–200 guests",
-      "photo": "assets/nebcd-dining-with-dems.webp",
       "tiers": [
         {
           "name": "Presenting Sponsor",
@@ -56,17 +53,17 @@
             "Thank-you on NEBCD social media"
           ]
         }
-      ]
+      ],
+      "photo": "assets/nebcd-dining-with-dems.webp",
+      "id": "dining-with-democrats",
+      "description": "Our premier annual fundraising dinner brings together Democratic leaders, candidates, elected officials, and community members for an evening of great food, inspiring speakers, and Democratic camaraderie. This is NEBCD's highest-profile event of the year."
     },
     {
-      "id": "labor-day-picnic",
-      "name": "Annual Labor Day Picnic",
+      "attendance": "Free, family-friendly community event",
       "eyebrow": "Community Event",
-      "description": "A beloved NEBCD tradition — our Labor Day Picnic is a free community celebration bringing together families, labor allies, local leaders, and Democratic activists for food, fun, and fellowship. One of the most well-attended events on the Northeast San Antonio Democratic calendar.",
+      "name": "Annual Labor Day Picnic",
       "date": "",
       "venue": "",
-      "attendance": "Free, family-friendly community event",
-      "photo": "",
       "tiers": [
         {
           "name": "Presenting Sponsor",
@@ -107,7 +104,10 @@
             "Name listed on event signage"
           ]
         }
-      ]
+      ],
+      "photo": "assets/nancy-corn.jpg",
+      "id": "labor-day-picnic",
+      "description": "A beloved NEBCD tradition — our Labor Day Picnic is a free community celebration bringing together families, labor allies, local leaders, and Democratic activists for food, fun, and fellowship. One of the most well-attended events on the Northeast San Antonio Democratic calendar."
     }
   ]
 }
