@@ -1,6 +1,17 @@
 {
+  "hero_image_alt": "NEBCD Office exterior",
+  "mobilize_url": "https://www.mobilize.us/nebcd/",
+  "volunteer_form_id": "1FAIpQLSdqfiOp32rsxjJu1g9HzbfaWHCIOLMafzeK87KnTbVryjMLmw",
+  "endorsements_cycle_label": "2026",
+  "actblue_dues_url": "https://secure.actblue.com/donate/nebcddues",
+  "instagram_url": "https://www.instagram.com/nebcd_tx/",
+  "office_directions_url": "https://maps.google.com/?q=6521+San+Pedro+Ave+San+Antonio+TX+78216",
+  "visit_photo_alt": "Lausanne at the NEBCD Office on San Pedro Ave.",
+  "visit_description": "Come by the NEBCD office. You'll be greeted by Madeleine and Ladybug the Pug. Check out our swag shop, say hi to Lausanne, and in the back you'll find Cameron — who can connect you with efforts in your area.",
+  "office_hours_line1": "Mon–Tue & Thu–Fri: 8 AM – 4 PM",
+  "office_hours_line2": "Wednesday: 8 AM – 7 PM",
   "fundraiser": {
-    "enabled": true,
+    "enabled": false,
     "eyebrow": "Fundraiser",
     "headline": "27th Annual Labor Day Picnic",
     "description": "North East Bexar County Democrats (NEBCD) is holding its 27th Annual Labor Day Picnic to celebrate the contributions of all of us who work for our families and communities every day. Former Mayor Ron Nirenberg will be the featured speaker. NEBCD will honor a Labor Woman and Labor Man of the Year who have given a life time of service to unions for the advancement of all workers. Jim Chesnut, local indie musical artist, will perform.",
@@ -9,11 +20,38 @@
     "button_label": "Get Tickets →",
     "button_url": "https://secure.actblue.com/donate/2026ldp"
   },
-  "hero_image_alt": "NEBCD Office exterior",
-  "mobilize_url": "https://www.mobilize.us/nebcd/",
-  "volunteer_form_id": "1FAIpQLSdqfiOp32rsxjJu1g9HzbfaWHCIOLMafzeK87KnTbVryjMLmw",
-  "endorsements_cycle_label": "2026",
-  "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
+  "office_phone": "210-917-1790",
+  "office_hours_line3": "Sat–Sun: Closed (except events)",
+  "voting_resources": [
+    {
+      "icon": "🗳️",
+      "title": "Check Your Registration",
+      "description": "Verify your voter registration, find your polling location, and view your individual sample ballot.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio"
+    },
+    {
+      "icon": "📋",
+      "title": "Vote by Mail",
+      "description": "Find out if you're eligible to vote by mail, download the application, and track your ballot status.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/3271/Vote-by-Mail"
+    },
+    {
+      "icon": "📋",
+      "title": "League of Women Voters Guide",
+      "description": "Nonpartisan candidate info from the League of Women Voters. Read candidates' answers in their own words before you vote.",
+      "link_label": "lwvsa.org →",
+      "url": "https://lwvsa.org/"
+    },
+    {
+      "icon": "🏛️",
+      "title": "Bexar County Elections",
+      "description": "Full information from the Bexar County Elections Department — early voting, locations, hours, and more.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/1568/Elections-Department"
+    }
+  ],
   "gallery_photos": [
     {
       "src": "assets/nebcd-event-music.webp",
@@ -51,47 +89,9 @@
       "size": "wide"
     }
   ],
-  "actblue_dues_url": "https://secure.actblue.com/donate/nebcddues",
-  "instagram_url": "https://www.instagram.com/nebcd_tx/",
-  "office_directions_url": "https://maps.google.com/?q=6521+San+Pedro+Ave+San+Antonio+TX+78216",
-  "visit_photo_alt": "Lausanne at the NEBCD Office on San Pedro Ave.",
-  "visit_description": "Come by the NEBCD office. You'll be greeted by Madeleine and Ladybug the Pug. Check out our swag shop, say hi to Lausanne, and in the back you'll find Cameron — who can connect you with efforts in your area.",
-  "office_hours_line1": "Mon–Tue & Thu–Fri: 8 AM – 4 PM",
-  "office_hours_line2": "Wednesday: 8 AM – 7 PM",
-  "office_phone": "210-917-1790",
-  "office_hours_line3": "Sat–Sun: Closed (except events)",
-  "voting_resources": [
-    {
-      "icon": "🗳️",
-      "title": "Check Your Registration",
-      "description": "Verify your voter registration, find your polling location, and view your individual sample ballot.",
-      "link_label": "bexar.org →",
-      "url": "https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio"
-    },
-    {
-      "icon": "📋",
-      "title": "Vote by Mail",
-      "description": "Find out if you're eligible to vote by mail, download the application, and track your ballot status.",
-      "link_label": "bexar.org →",
-      "url": "https://www.bexar.org/3271/Vote-by-Mail"
-    },
-    {
-      "icon": "📋",
-      "title": "League of Women Voters Guide",
-      "description": "Nonpartisan candidate info from the League of Women Voters. Read candidates' answers in their own words before you vote.",
-      "link_label": "lwvsa.org →",
-      "url": "https://lwvsa.org/"
-    },
-    {
-      "icon": "🏛️",
-      "title": "Bexar County Elections",
-      "description": "Full information from the Bexar County Elections Department — early voting, locations, hours, and more.",
-      "link_label": "bexar.org →",
-      "url": "https://www.bexar.org/1568/Elections-Department"
-    }
-  ],
   "office_address_street": "6521 San Pedro Ave.",
   "actblue_donate_url": "https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1",
+  "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
   "facebook_url": "https://www.facebook.com/NEBCD/",
   "hero_image": "assets/NEBCD-Office.webp",
   "office_email": "info@nebcd.org",
