@@ -13,6 +13,42 @@ const endorsements = JSON.parse(fs.readFileSync('_data/endorsements.json', 'utf8
 const storeData   = JSON.parse(fs.readFileSync('_data/store.json', 'utf8'));
 const sponsorData = JSON.parse(fs.readFileSync('_data/sponsor.json', 'utf8'));
 
+// ── Endorsements page mode ─────────────────────────────────────────────────
+// Set in the CMS: Site Settings → Endorsements Page Mode.
+// "endorsements" (default) = endorsed-candidates page.
+// "election" = election guide covering all candidates after the primary.
+// The URL stays /endorsements in both modes so existing links keep working.
+const cycle = settings.endorsements_cycle_label || '';
+const isElectionMode = settings.endorsements_page_mode === 'election';
+
+const pageText = isElectionMode ? {
+  navLabel:          'Election',
+  breadcrumb:        'Election Guide',
+  heading:           'NEBCD Election Guide',
+  title:             `${cycle} Election Guide | North East Bexar County Democrats | NEBCD`,
+  description:       `NEBCD's ${cycle} guide to the candidates on the ballot in Bexar County elections.`,
+  keywords:          `NEBCD election guide ${cycle}, Bexar County voter guide, Bexar County candidates, San Antonio election ${cycle}`,
+  socialTitle:       `${cycle} Election Guide | NEBCD`,
+  socialDescription: `Meet the candidates on the ${cycle} ballot in Bexar County, a guide from the North East Bexar County Democrats.`,
+  schemaName:        `NEBCD ${cycle} Election Guide Candidates`,
+  schemaDescription: `Candidates on the ${cycle} Bexar County ballot, compiled by the North East Bexar County Democrats.`,
+  homeHeading:       `${cycle} Election Guide`,
+  homeButton:        'View the Election Guide →',
+} : {
+  navLabel:          'Endorsements',
+  breadcrumb:        'Endorsements',
+  heading:           'NEBCD Endorsements',
+  title:             `${cycle} Endorsements | North East Bexar County Democrats | NEBCD`,
+  description:       `NEBCD's ${cycle} endorsed candidates for Bexar County elections.`,
+  keywords:          `NEBCD endorsements ${cycle}, Bexar County Democrats endorsements, San Antonio school board election, Democratic endorsements Texas`,
+  socialTitle:       `${cycle} Endorsements | NEBCD`,
+  socialDescription: `See which candidates the North East Bexar County Democrats endorse for the ${cycle} elections in Bexar County.`,
+  schemaName:        `NEBCD ${cycle} Endorsed Candidates`,
+  schemaDescription: `North East Bexar County Democrats endorsements for the ${cycle} Bexar County elections.`,
+  homeHeading:       'Our Endorsements',
+  homeButton:        'View All Endorsements →',
+};
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 // HTML-escape a string
@@ -360,8 +396,8 @@ function buildEndorsementsSchema() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: `NEBCD ${settings.endorsements_cycle_label} Endorsed Candidates`,
-    description: `North East Bexar County Democrats endorsements for the ${settings.endorsements_cycle_label} Bexar County elections.`,
+    name: pageText.schemaName,
+    description: pageText.schemaDescription,
     url: 'https://www.nebcd.org/endorsements',
     itemListElement: items,
   };
@@ -370,12 +406,26 @@ function buildEndorsementsSchema() {
 }
 
 // ── Template renderer ──────────────────────────────────────────────────────
+// NAV_ELECTION_LABEL is filled on every page automatically, so any template
+// can use {{NAV_ELECTION_LABEL}} for the endorsements nav link.
 function render(template, replacements) {
   let out = template;
-  for (const [key, val] of Object.entries(replacements)) {
+  const all = { NAV_ELECTION_LABEL: esc(pageText.navLabel), ...replacements };
+  for (const [key, val] of Object.entries(all)) {
     out = out.split(`{{${key}}}`).join(val);
   }
   return out;
+}
+
+// ── Nav label sync ─────────────────────────────────────────────────────────
+// Rewrites the text of plain nav/footer links to endorsements.html so every
+// page matches the current mode, including hand-edited templates and the
+// static pages (volunteer, privacy, terms) that the build doesn't render.
+// Links with a class (like the homepage "View All…" button) are left alone.
+const NAV_LINK_PATTERN = /(<a href="endorsements\.html"(?![^>]*\bclass=)[^>]*>)[^<]*(<\/a>)/g;
+
+function syncNavLabel(html) {
+  return html.replace(NAV_LINK_PATTERN, `$1${pageText.navLabel}$2`);
 }
 
 // ── Mobilize helpers ───────────────────────────────────────────────────────
@@ -612,11 +662,21 @@ function buildSponsorEvents() {
 // ── Main (async to support Mobilize API fetch) ─────────────────────────────
 async function main() {
 
-// ── Build endorsements.html ────────────────────────────────────────────────console.log('Building endorsements.html...');
+console.log(`Endorsements page mode: ${isElectionMode ? 'Election Guide' : 'Endorsements'}`);
+
+// ── Build endorsements.html ────────────────────────────────────────────────
+console.log('Building endorsements.html...');
 const endorsementsTemplate = fs.readFileSync('endorsements.template.html', 'utf8');
 const endorsementsHtml = render(endorsementsTemplate, {
   ENDORSEMENTS_CYCLE_LABEL: esc(settings.endorsements_cycle_label),
   ENDORSEMENTS_INTRO:       esc(settings.endorsements_intro),
+  PAGE_TITLE:               esc(pageText.title),
+  PAGE_DESCRIPTION:         esc(pageText.description),
+  PAGE_KEYWORDS:            esc(pageText.keywords),
+  SOCIAL_TITLE:             esc(pageText.socialTitle),
+  SOCIAL_DESCRIPTION:       esc(pageText.socialDescription),
+  BREADCRUMB_LABEL:         esc(pageText.breadcrumb),
+  PAGE_HEADING:             esc(pageText.heading),
   ACTBLUE_DUES_URL:         esc(settings.actblue_dues_url),
   ACTBLUE_DONATE_URL:       esc(settings.actblue_donate_url),
   FACEBOOK_URL:             esc(settings.facebook_url),
@@ -627,7 +687,7 @@ const endorsementsHtml = render(endorsementsTemplate, {
   RUNOFF_SECTION:           buildRunoffSection(),
   ENDORSEMENTS_SCHEMA:      buildEndorsementsSchema(),
 });
-fs.writeFileSync('endorsements.html', endorsementsHtml);
+fs.writeFileSync('endorsements.html', syncNavLabel(endorsementsHtml));
 console.log('  ✓ endorsements.html');
 
 // ── Build store.html ───────────────────────────────────────────────────────
@@ -641,7 +701,7 @@ const storeHtml = render(storeTemplate, {
   FACEBOOK_URL:        esc(settings.facebook_url),
   INSTAGRAM_URL:       esc(settings.instagram_url),
 });
-fs.writeFileSync('store.html', storeHtml);
+fs.writeFileSync('store.html', syncNavLabel(storeHtml));
 console.log('  ✓ store.html');
 
 // ── Build sponsor.html ─────────────────────────────────────────────────────
@@ -655,7 +715,7 @@ const sponsorHtml = render(sponsorTemplate, {
   FACEBOOK_URL:        esc(settings.facebook_url),
   INSTAGRAM_URL:       esc(settings.instagram_url),
 });
-fs.writeFileSync('sponsor.html', sponsorHtml);
+fs.writeFileSync('sponsor.html', syncNavLabel(sponsorHtml));
 console.log('  ✓ sponsor.html');
 
 // ── Fetch Mobilize events (async) ──────────────────────────────────────────
@@ -686,12 +746,14 @@ const indexHtml = render(indexTemplate, {
   FACEBOOK_URL:            esc(settings.facebook_url),
   INSTAGRAM_URL:           esc(settings.instagram_url),
   ENDORSEMENTS_INTRO:      esc(settings.endorsements_intro),
+  HOME_ENDORSEMENTS_HEADING: esc(pageText.homeHeading),
+  HOME_ENDORSEMENTS_BUTTON:  esc(pageText.homeButton),
   EVENT_PREVIEW_CARDS:     buildEventPreviewCards(mobilizeEvents),
   ENDORSEMENT_PREVIEW_CARDS: buildEndorsementPreviewCards(),
   GALLERY_PHOTOS:          buildGalleryPhotos(),
   FUNDRAISER_SECTION:      buildFundraiserSection(),
 });
-fs.writeFileSync('index.html', indexHtml);
+fs.writeFileSync('index.html', syncNavLabel(indexHtml));
 console.log('  ✓ index.html');
 
 // ── Build events.html ──────────────────────────────────────────────────────
@@ -707,8 +769,23 @@ const eventsHtml = render(eventsTemplate, {
   MOBILIZE_SECTION:        buildMobilizeSection(mobilizeEvents),
   FUNDRAISER_SECTION:      buildFundraiserSection(),
 });
-fs.writeFileSync('events.html', eventsHtml);
+fs.writeFileSync('events.html', syncNavLabel(eventsHtml));
 console.log('  ✓ events.html');
+
+// ── Sync nav label on static pages (not built from templates) ──────────────
+console.log('Syncing nav label on static pages...');
+['volunteer.html', 'privacy.html', 'terms.html']
+  .filter(file => fs.existsSync(file))
+  .forEach(file => {
+    const html = fs.readFileSync(file, 'utf8');
+    const updated = syncNavLabel(html);
+    if (updated !== html) {
+      fs.writeFileSync(file, updated);
+      console.log(`  ✓ ${file} updated`);
+    } else {
+      console.log(`  ✓ ${file} already matches`);
+    }
+  });
 
 console.log('\nBuild complete.');
 

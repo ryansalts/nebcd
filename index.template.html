@@ -78,7 +78,7 @@
 </script></head>
 <body>
 
-  
+
   <header class="site-header" id="site-header">
     <nav class="nav-inner">
       <a href="index.html" class="nav-logo">
@@ -90,7 +90,7 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="#mission">About</a></li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="endorsements.html">Election</a></li>
+        <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
         <li><a href="https://join.nebcd.org/m/volunteer" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
         <li><a href="store.html">Store</a></li>
         <li><a href="#visit">Visit Us</a></li>
@@ -162,19 +162,19 @@
       </div>
     </section>
 
-    <!-- ENDORSEMENTS PREVIEW -->
+    <!-- ENDORSEMENTS PREVIEW (wording switches with Site Settings → Endorsements Page Mode) -->
     <section class="endorsements-preview" id="endorsements-preview">
       <div class="container">
         <div class="section-header">
           <span class="eyebrow">Mission in Action</span>
-          <h2>Our Endorsements</h2>
+          <h2>{{HOME_ENDORSEMENTS_HEADING}}</h2>
           <p>{{ENDORSEMENTS_INTRO}}</p>
         </div>
         <div class="endorsement-grid">
           {{ENDORSEMENT_PREVIEW_CARDS}}
         </div>
         <div class="section-footer-link">
-          <a href="endorsements.html" class="btn btn-outline">View All Endorsements →</a>
+          <a href="endorsements.html" class="btn btn-outline">{{HOME_ENDORSEMENTS_BUTTON}}</a>
         </div>
       </div>
     </section>
@@ -268,7 +268,7 @@
         <ul>
           <li><a href="#mission">About</a></li>
           <li><a href="events.html">Events</a></li>
-          <li><a href="endorsements.html">Election</a></li>
+          <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
           <li><a href="https://join.nebcd.org/m/volunteer" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
           <li><a href="store.html">Store</a></li>
           <li><a href="#visit">Visit Us</a></li>
@@ -305,6 +305,3 @@
   <script src="main.js"></script>
 </body>
 </html>
-
-
-

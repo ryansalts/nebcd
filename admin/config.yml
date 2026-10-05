@@ -129,6 +129,15 @@ collections:
           - { label: "Instagram URL", name: instagram_url, widget: string }
           - { label: "Mobilize Volunteer URL", name: mobilize_url, widget: string }
           - { label: "Google Form ID (Volunteer)", name: volunteer_form_id, widget: string, hint: "The long ID from the Google Form embed URL" }
+          - label: "Endorsements Page Mode"
+            name: endorsements_page_mode
+            widget: select
+            required: false
+            default: "endorsements"
+            options:
+              - { label: "Endorsements", value: "endorsements" }
+              - { label: "Election Guide", value: "election" }
+            hint: "Switch to Election Guide after the primary. Changes the page title, headings, nav link on every page, homepage section, and search/social metadata. The page address stays /endorsements. Remember to update the Endorsements Intro below to match."
           - { label: "Endorsements Cycle Label", name: endorsements_cycle_label, widget: string, hint: "e.g. 2026 — appears in page titles and headings" }
           - { label: "Endorsements Intro", name: endorsements_intro, widget: text, hint: "Short intro shown on the homepage and endorsements page hero" }
           - label: "Gallery Photos"
