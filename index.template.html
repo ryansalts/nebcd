@@ -43,7 +43,10 @@
     "description": "The oldest Democratic club in Bexar County. Founded in 1994, NEBCD raises funds, organizes volunteers, and maximizes voter turnout across Northeast San Antonio and Bexar County.",
     "foundingDate": "1994",
     "email": "{{OFFICE_EMAIL}}",
+    {{#if HAS_PHONE}}
     "telephone": "+1{{OFFICE_PHONE_HREF}}",
+    {{/if HAS_PHONE}}
+    {{#if IN_SEASON}}
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "{{OFFICE_ADDRESS_STREET}}",
@@ -52,6 +55,7 @@
       "postalCode": "78216",
       "addressCountry": "US"
     },
+    {{/if IN_SEASON}}
     "sameAs": [
       "{{FACEBOOK_URL}}",
       "{{INSTAGRAM_URL}}"
@@ -68,6 +72,26 @@
 
   <!-- ── Styles ── -->
   <link rel="stylesheet" href="style.css" />
+  {{#if SHOW_LEADERSHIP}}
+  <style>
+    /* Club Leadership section (homepage) */
+    .leadership-section { padding: 96px 0; }
+    .leadership-list { columns: 4 200px; column-gap: 40px; max-width: 980px; margin: 0 auto; }
+    .leadership-list li { break-inside: avoid; padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,.08); }
+    .leadership-name { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; color: var(--dark); }
+    .leadership-title { display: block; margin-top: 2px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); }
+    .leadership-list--panel { columns: 2; column-gap: 32px; max-width: none; margin: 0 0 36px; }
+    .leadership-list--panel li { padding: 9px 0; border-bottom-color: rgba(255,255,255,.12); }
+    .leadership-list--panel .leadership-name { color: white; font-size: 1rem; }
+    .leadership-list--panel .leadership-title { color: var(--blue-light); }
+    #leadership .visit-content-col .btn { align-self: flex-start; }
+    @media (max-width: 560px) {
+      .leadership-section { padding: 64px 0; }
+      .leadership-list { columns: 2; column-gap: 20px; }
+      .leadership-name { font-size: .95rem; }
+    }
+  </style>
+  {{/if SHOW_LEADERSHIP}}
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8ZFCXPCD6H"></script>
 <script>
@@ -90,10 +114,10 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="#mission">About</a></li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+        {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
         <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-        <li><a href="store.html">Store</a></li>
-        <li><a href="#visit">Visit Us</a></li>
+        {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+        {{#if IN_SEASON}}<li><a href="#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
       </ul>
     </nav>
@@ -112,7 +136,7 @@
         <h1 class="hero-headline">Democracy Lives<br />in the Neighborhood</h1>
         <p class="hero-sub">The North East Bexar County Democrats raise funds, organize volunteers, and maximize voter turnout — right here in our community.</p>
         <div class="hero-actions">
-          <a href="#visit" class="btn btn-primary">Visit Our Office</a>
+          {{#if IN_SEASON}}<a href="#visit" class="btn btn-primary">Visit Our Office</a>{{/if IN_SEASON}}{{#unless IN_SEASON}}<a href="events.html" class="btn btn-primary">See Upcoming Events</a>{{/unless IN_SEASON}}
           <a href="#get-involved" class="btn btn-ghost">Get Involved</a>
         </div>
       </div>
@@ -149,20 +173,36 @@
             <span class="eyebrow">Our Mission</span>
             <h2>Building Democratic Power in Northeast San Antonio</h2>
             <p>We focus on fundraising for impactful initiatives and organizing activists across Bexar County. From monthly membership meetings to election-season canvassing, everything we do is aimed at boosting engagement and maximizing voter impact.</p>
-            <p class="mission-meeting"><strong>Monthly Meetings</strong> — 2nd Saturday of each month, 10 a.m. to noon.</p>
+            <p class="mission-meeting"><strong>Monthly Meetings</strong> — {{MEETING_TEXT}}</p>
             <a href="#get-involved" class="btn btn-blue">Join the Movement</a>
           </div>
           <div class="mission-photos">
             <div class="photo-stack">
-              <img src="assets/nebcd-event.webp" alt="NEBCD members at a community event" class="photo-main" loading="lazy" />
-              <img src="assets/nebcd-dining-with-dems.webp" alt="Dining with Democrats event 2025" class="photo-accent" loading="lazy" />
+              <img src="{{MISSION_PHOTO_1}}" alt="{{MISSION_PHOTO_1_ALT}}" class="photo-main" loading="lazy" />
+              <img src="{{MISSION_PHOTO_2}}" alt="{{MISSION_PHOTO_2_ALT}}" class="photo-accent" loading="lazy" />
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ENDORSEMENTS PREVIEW (wording switches with Site Settings → Endorsements Page Mode) -->
+    {{#if LEADERSHIP_LIST_ON}}
+    <!-- CLUB LEADERSHIP, campaign season (👥 Leadership in the admin; the nav's "About" link lands just above it) -->
+    <section class="leadership-section section-alt" id="leadership">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Who We Are</span>
+          <h2>Club Leadership</h2>
+          <p>{{LEADERSHIP_INTRO}}</p>
+        </div>
+        <ul class="leadership-list">
+          {{LEADERSHIP_LIST}}
+        </ul>
+      </div>
+    </section>
+    {{/if LEADERSHIP_LIST_ON}}
+    {{#if ELECTION_PAGE_ON}}
+    <!-- ELECTION PREVIEW (wording and cards switch with ⚙️ Site Mode → Election Page Mode) -->
     <section class="endorsements-preview" id="endorsements-preview">
       <div class="container">
         <div class="section-header">
@@ -178,6 +218,7 @@
         </div>
       </div>
     </section>
+    {{/if ELECTION_PAGE_ON}}
 
     <!-- GET INVOLVED -->
     <section class="get-involved-section section-alt" id="get-involved">
@@ -224,7 +265,8 @@
       </div>
     </section>
 
-    <!-- VISIT US -->
+    {{#if IN_SEASON}}
+    <!-- VISIT US (hidden in Off-Season Mode) -->
     <section class="visit-section" id="visit">
       <div class="visit-photo-col">
         <img src="{{VISIT_PHOTO}}" alt="{{VISIT_PHOTO_ALT}}" loading="lazy" />
@@ -238,10 +280,12 @@
             <span class="detail-label">📍 Address</span>
             <span class="detail-value">{{OFFICE_ADDRESS_STREET}}<br />{{OFFICE_ADDRESS_CITY}}</span>
           </div>
+          {{#if HAS_PHONE}}
           <div class="visit-detail-item">
             <span class="detail-label">📞 Phone</span>
             <span class="detail-value"><a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a></span>
           </div>
+          {{/if HAS_PHONE}}
           <div class="visit-detail-item">
             <span class="detail-label">✉️ Email</span>
             <span class="detail-value"><a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a></span>
@@ -254,6 +298,24 @@
         <a href="{{OFFICE_DIRECTIONS_URL}}" target="_blank" class="btn btn-primary">Get Directions ↗</a>
       </div>
     </section>
+    {{/if IN_SEASON}}
+    {{#if LEADERSHIP_FEATURE_ON}}
+    <!-- CLUB LEADERSHIP, off-season: takes the Visit Us spot and layout (👥 Leadership in the admin) -->
+    <section class="visit-section" id="leadership">
+      <div class="visit-photo-col">
+        <img src="{{LEADERSHIP_PHOTO}}" alt="{{LEADERSHIP_PHOTO_ALT}}" loading="lazy" />
+      </div>
+      <div class="visit-content-col">
+        <span class="eyebrow">Who We Are</span>
+        <h2>Club Leadership</h2>
+        <p>{{LEADERSHIP_INTRO}}</p>
+        <ul class="leadership-list leadership-list--panel">
+          {{LEADERSHIP_LIST}}
+        </ul>
+        <a href="events.html" class="btn btn-primary">Come to a Meeting →</a>
+      </div>
+    </section>
+    {{/if LEADERSHIP_FEATURE_ON}}
 
   </main>
 
@@ -268,10 +330,10 @@
         <ul>
           <li><a href="#mission">About</a></li>
           <li><a href="events.html">Events</a></li>
-          <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+          {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
           <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-          <li><a href="store.html">Store</a></li>
-          <li><a href="#visit">Visit Us</a></li>
+          {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+          {{#if IN_SEASON}}<li><a href="#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         </ul>
       </div>
       <div class="footer-social">

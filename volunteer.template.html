@@ -20,7 +20,7 @@
   <meta property="og:site_name" content="North East Bexar County Democrats" />
   <meta property="og:title" content="Volunteer with NEBCD | North East Bexar County Democrats" />
   <meta property="og:description" content="Sign up to volunteer with NEBCD. Phonebanks, canvassing, events, and data entry — there's a role that fits your schedule in Northeast San Antonio." />
-  <meta property="og:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta property="og:image" content="https://www.nebcd.org/{{SHARE_IMAGE}}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="en_US" />
@@ -29,7 +29,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Volunteer with NEBCD | North East Bexar County Democrats" />
   <meta name="twitter:description" content="Sign up to volunteer with NEBCD. Phonebanks, canvassing, events, and data entry — there's a role that fits your schedule in Northeast San Antonio." />
-  <meta name="twitter:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta name="twitter:image" content="https://www.nebcd.org/{{SHARE_IMAGE}}" />
 
   <!-- ── Schema.org ── -->
   <script type="application/ld+json">
@@ -43,8 +43,11 @@
       "@type": "Organization",
       "name": "North East Bexar County Democrats",
       "url": "https://www.nebcd.org",
+      {{#if HAS_PHONE}}
       "telephone": "+1{{OFFICE_PHONE_HREF}}",
-      "email": "{{OFFICE_EMAIL}}",
+      {{/if HAS_PHONE}}
+      "email": "{{OFFICE_EMAIL}}"{{#if IN_SEASON}},{{/if IN_SEASON}}
+      {{#if IN_SEASON}}
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "{{OFFICE_ADDRESS_STREET}}",
@@ -53,6 +56,7 @@
         "postalCode": "78216",
         "addressCountry": "US"
       }
+      {{/if IN_SEASON}}
     }
   }
   </script>
@@ -90,10 +94,10 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html#mission">About</a></li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+        {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
         <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-        <li><a href="store.html">Store</a></li>
-        <li><a href="index.html#visit">Visit Us</a></li>
+        {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+        {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
       </ul>
     </nav>
@@ -158,14 +162,24 @@
           <aside class="volunteer-contact-aside">
             <div class="sidebar-block sidebar-block--contact">
               <h3>Questions?</h3>
-              <p>Reach us at <a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a> or stop by the office — we'd love to meet you in person.</p>
+              <p>Reach us at <a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a> {{#if IN_SEASON}}or stop by the office — we'd love to meet you in person.{{/if IN_SEASON}}{{#unless IN_SEASON}}— we'd love to hear from you, or come say hello at an upcoming event.{{/unless IN_SEASON}}</p>
+              {{#if IN_SEASON}}
               <div class="sidebar-address">
                 <strong>NEBCD Office</strong><br />
                 {{OFFICE_ADDRESS_STREET}}<br />
                 {{OFFICE_ADDRESS_CITY}}<br />
-                <a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a>
+                {{#if HAS_PHONE}}<a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a>{{/if HAS_PHONE}}
               </div>
               <a href="{{OFFICE_DIRECTIONS_URL}}" target="_blank" class="btn-link">Get Directions →</a>
+              {{/if IN_SEASON}}
+              {{#unless IN_SEASON}}
+              {{#if HAS_PHONE}}
+              <div class="sidebar-address">
+                <a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a>
+              </div>
+              {{/if HAS_PHONE}}
+              <a href="events.html" class="btn-link">See Upcoming Events →</a>
+              {{/unless IN_SEASON}}
             </div>
           </aside>
         </div>
@@ -185,10 +199,10 @@
         <ul>
           <li><a href="index.html#mission">About</a></li>
           <li><a href="events.html">Events</a></li>
-          <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+          {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
           <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-          <li><a href="store.html">Store</a></li>
-          <li><a href="index.html#visit">Visit Us</a></li>
+          {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+          {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         </ul>
       </div>
       <div class="footer-social">

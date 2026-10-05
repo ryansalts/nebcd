@@ -17,7 +17,7 @@
   <meta property="og:site_name" content="North East Bexar County Democrats" />
   <meta property="og:title" content="Store | NEBCD" />
   <meta property="og:description" content="Shop NEBCD merchandise at our headquarters — yard signs, shirts, buttons, flags, and more. In-person pickup only at {{OFFICE_ADDRESS_STREET}}" />
-  <meta property="og:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta property="og:image" content="https://www.nebcd.org/{{SHARE_IMAGE}}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="en_US" />
@@ -25,7 +25,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Store | NEBCD" />
   <meta name="twitter:description" content="Shop NEBCD merchandise at our headquarters — yard signs, shirts, buttons, flags, and more. In-person pickup only." />
-  <meta name="twitter:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta name="twitter:image" content="https://www.nebcd.org/{{SHARE_IMAGE}}" />
 
   <script type="application/ld+json">
   {
@@ -34,7 +34,9 @@
     "name": "NEBCD Headquarters Store",
     "description": "NEBCD merchandise available at our headquarters — yard signs, t-shirts, buttons, bumper stickers, flags, and more. In-person pickup only.",
     "url": "https://www.nebcd.org/store",
+    {{#if HAS_PHONE}}
     "telephone": "+1{{OFFICE_PHONE_HREF}}",
+    {{/if HAS_PHONE}}
     "email": "{{OFFICE_EMAIL}}",
     "address": {
       "@type": "PostalAddress",
@@ -99,10 +101,10 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html#mission">About</a></li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+        {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
         <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-        <li><a href="store.html">Store</a></li>
-        <li><a href="index.html#visit">Visit Us</a></li>
+        {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+        {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
       </ul>
     </nav>
@@ -150,7 +152,7 @@
             <span class="strip-icon">📞</span>
             <div>
               <strong>Questions?</strong>
-              <span><a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a> · <a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a></span>
+              <span>{{#if HAS_PHONE}}<a href="tel:{{OFFICE_PHONE_HREF}}">{{OFFICE_PHONE}}</a> · {{/if HAS_PHONE}}<a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a></span>
             </div>
           </div>
         </div>
@@ -180,7 +182,9 @@
           <p>No appointment needed. Come in during office hours, browse the full selection, and take something home that says exactly what you think.</p>
           <div class="sponsor-contact-actions">
             <a href="{{OFFICE_DIRECTIONS_URL}}" target="_blank" class="btn btn-primary">Get Directions ↗</a>
+            {{#if HAS_PHONE}}
             <a href="tel:{{OFFICE_PHONE_HREF}}" class="btn btn-ghost">Call Ahead</a>
+            {{/if HAS_PHONE}}
           </div>
         </div>
       </div>
@@ -199,10 +203,10 @@
         <ul>
           <li><a href="index.html#mission">About</a></li>
           <li><a href="events.html">Events</a></li>
-          <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+          {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
           <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-          <li><a href="store.html">Store</a></li>
-          <li><a href="index.html#visit">Visit Us</a></li>
+          {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+          {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         </ul>
       </div>
       <div class="footer-social">

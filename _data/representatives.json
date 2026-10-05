@@ -1,0 +1,26 @@
+{
+  "representatives": [],
+  "lookup_links": [
+    {
+      "icon": "🏛️",
+      "title": "Texas Legislature: Who Represents Me?",
+      "description": "Enter your address to see who represents you in Congress and the Texas Legislature.",
+      "link_label": "wrm.capitol.texas.gov →",
+      "url": "https://wrm.capitol.texas.gov/"
+    },
+    {
+      "icon": "📍",
+      "title": "Bexar County Precinct Finder",
+      "description": "Bexar County's \"Who Represents Me\" precinct finder: enter your address to find your precinct and the officials who represent it.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/2231/Who-represents-me-Search"
+    },
+    {
+      "icon": "📋",
+      "title": "Bexar County Elected Officials",
+      "description": "A full list of current county and district officials from the Bexar County Elections Department.",
+      "link_label": "elections.bexar.org →",
+      "url": "https://elections.bexar.org/1962/Elected-Officials"
+    }
+  ]
+}

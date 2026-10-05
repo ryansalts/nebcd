@@ -40,7 +40,7 @@
   <meta property="og:site_name" content="North East Bexar County Democrats" />
   <meta property="og:title" content="PAGE TITLE | NEBCD" />
   <meta property="og:description" content="PAGE DESCRIPTION for social sharing." />
-  <meta property="og:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta property="og:image" content="https://www.nebcd.org/{{SHARE_IMAGE}}" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="en_US" />
@@ -49,7 +49,7 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="PAGE TITLE | NEBCD" />
   <meta name="twitter:description" content="PAGE DESCRIPTION for social sharing." />
-  <meta name="twitter:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
+  <meta name="twitter:image" content="https://www.nebcd.org/{{SHARE_IMAGE}}" />
 
   <!-- ── Schema.org ── -->
   <!--
@@ -115,10 +115,10 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html#mission">About</a></li>
         <li><a href="events.html">Events</a></li>
-        <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+        {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
         <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-        <li><a href="store.html">Store</a></li>
-        <li><a href="index.html#visit">Visit Us</a></li>
+        {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+        {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
       </ul>
     </nav>
@@ -154,10 +154,10 @@
         <ul>
           <li><a href="index.html#mission">About</a></li>
           <li><a href="events.html">Events</a></li>
-          <li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>
+          {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
           <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-          <li><a href="store.html">Store</a></li>
-          <li><a href="index.html#visit">Visit Us</a></li>
+          {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
+          {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
         </ul>
       </div>
       <div class="footer-social">

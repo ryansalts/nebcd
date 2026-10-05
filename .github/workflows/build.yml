@@ -32,14 +32,17 @@ jobs:
         with:
           node-version: '20'
 
+      # Builds the finished site into _site/ and checks it before publishing.
+      # If the check fails, nothing is published and the live site stays as it was.
       - name: Build site
         run: node build.js
 
       - uses: actions/configure-pages@v5
 
+      # Only the finished site is published, not the data files, templates or build script.
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
 
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -1,3 +1,5 @@
+# true = when you run the admin on your own computer (localhost) with "npx decap-server",
+# saves go to the files on your computer. On nebcd.org it always uses GitHub.
 local_backend: false
 
 backend:
@@ -13,8 +15,9 @@ public_folder: "assets"
 # ─────────────────────────────────────────────────────────────────────────────
 # How the admin is organized (one screen per job):
 #   📅 Events            → _data/events.json
-#   🗳️ Elections         → _data/endorsements.json + _data/elections.json
+#   🗳️ Elections         → _data/endorsements.json + _data/representatives.json + _data/elections.json
 #   🏠 Homepage          → _data/homepage.json
+#   👥 Leadership        → _data/leadership.json
 #   📍 Office & Contact  → _data/office.json
 #   🔗 Links & Accounts  → _data/links.json
 #   🛍️ Store             → _data/store.json
@@ -61,12 +64,12 @@ collections:
                 name: featured
                 widget: boolean
                 default: false
-                hint: "Turn on to show this event in the homepage's Upcoming Events section. Up to 3 are shown; any open spots are filled with upcoming Mobilize shifts."
+                hint: "Turn on to make sure this event appears in the homepage's Upcoming Events section (up to 3 are shown). Any open spots are filled automatically: with Mobilize shifts during campaign season, or with the next upcoming events in the off-season."
 
   # ── Elections ─────────────────────────────────────────────────────────────
   - name: "elections"
     label: "🗳️ Elections"
-    description: "Everything on the Election page (nebcd.org/endorsements): the candidates, the intro text and the voting resources. To switch the page between Endorsements and Election Guide, go to ⚙️ Site Mode."
+    description: "Everything on the Election page (nebcd.org/endorsements): candidates, representatives, intro text and voting resources. Which of these the page shows (Endorsements, Election Guide, Representatives or Hidden) is set in ⚙️ Site Mode."
     files:
       - label: "Candidates"
         name: "endorsements"
@@ -101,6 +104,46 @@ collections:
                 default: false
                 hint: "Turn on to show this candidate in the homepage's election section. Up to 4 are shown."
 
+      - label: "Representatives"
+        name: "representatives"
+        file: "_data/representatives.json"
+        fields:
+          - label: "Representatives"
+            name: "representatives"
+            widget: list
+            label_singular: "Representative"
+            summary: "{{fields.name}} — {{fields.office}}"
+            hint: "Shown when ⚙️ Site Mode → Election Page Mode is set to Connect With Your Representatives. You can fill this in ahead of time; it stays hidden until then. People are grouped under their Group heading, in the order the groups first appear in this list."
+            fields:
+              - { label: "Name", name: name, widget: string }
+              - { label: "Office", name: office, widget: string, hint: "e.g. U.S. Senator, State Representative, County Commissioner" }
+              - { label: "Group", name: group, widget: string, hint: "Heading this person is listed under, e.g. U.S. Senate, U.S. House, Texas House, Bexar County. Type it the same way for everyone in the group." }
+              - { label: "District", name: district, widget: string, required: false, hint: "Short label on the card, e.g. CD-21, HD-121 or Precinct 3. Leave blank for statewide offices." }
+              - { label: "Photo", name: photo, widget: image, required: false, hint: "Official headshot. Leave blank if you don't have one." }
+              - { label: "Office Phone", name: phone, widget: string, required: false, hint: "e.g. 210-555-0100" }
+              - { label: "Email", name: email, widget: string, required: false }
+              - { label: "Contact Form Link", name: contact_url, widget: string, required: false, hint: "The official \"contact me\" page, if they have one. Shown as the main Contact button." }
+              - { label: "Website", name: website, widget: string, required: false, hint: "Official website, including https://" }
+              - { label: "Facebook Link", name: facebook_url, widget: string, required: false }
+              - { label: "Instagram Link", name: instagram_url, widget: string, required: false }
+              - label: "Show on Homepage"
+                name: featured
+                widget: boolean
+                default: false
+                hint: "Turn on to show this person in the homepage's election section while the page is in Representatives mode. Up to 4 are shown."
+          - label: "Find Your Representatives Links"
+            name: "lookup_links"
+            widget: list
+            label_singular: "Link"
+            summary: "{{fields.title}}"
+            hint: "Cards at the top of the Representatives page, so anyone can look up their own officials by address."
+            fields:
+              - { label: "Icon (emoji)", name: icon, widget: string, hint: "One emoji, e.g. 🏛️" }
+              - { label: "Title", name: title, widget: string }
+              - { label: "Description", name: description, widget: text }
+              - { label: "Link Label", name: link_label, widget: string, hint: "Small link text at the bottom of the card, e.g. bexar.org →" }
+              - { label: "Link", name: url, widget: string, hint: "Full web address including https://" }
+
       - label: "Election Page Text & Voting Resources"
         name: "election-page"
         file: "_data/elections.json"
@@ -110,16 +153,27 @@ collections:
             widget: string
             required: false
             hint: "Used in the Election page title and headings, e.g. 2026. Leave blank to use the current year automatically."
-          - label: "Intro Text"
+          - label: "Intro Text: Endorsements"
+            name: intro_endorsements
+            widget: text
+            required: false
+            hint: "Shown at the top of the Election page and in the homepage's election section while the page is in Endorsements mode. Leave blank for: NEBCD proudly endorses these candidates for the [year] election cycle."
+          - label: "Intro Text: Election Guide"
             name: endorsements_intro
             widget: text
-            hint: "Short intro shown at the top of the Election page and in the homepage's election section. Update it when you switch between Endorsements and Election Guide in ⚙️ Site Mode."
+            required: false
+            hint: "Shown while the page is in Election Guide mode."
+          - label: "Intro Text: Representatives"
+            name: intro_representatives
+            widget: text
+            required: false
+            hint: "Shown while the page is in Connect With Your Representatives mode. Leave blank for: Your voice matters between elections too. Find out who represents you and how to reach them."
           - label: "Voting Resources"
             name: voting_resources
             widget: list
             label_singular: "Resource"
             summary: "{{fields.title}}"
-            hint: "The \"Know Before You Vote\" cards on the Election page."
+            hint: "The \"Know Before You Vote\" cards on the Election page (Endorsements and Election Guide modes)."
             fields:
               - { label: "Icon (emoji)", name: icon, widget: string, hint: "One emoji, e.g. 🗳️" }
               - { label: "Title", name: title, widget: string }
@@ -130,7 +184,7 @@ collections:
   # ── Homepage ──────────────────────────────────────────────────────────────
   - name: "homepage"
     label: "🏠 Homepage"
-    description: "The big photo at the top of the homepage and the photo gallery. (Homepage events and candidates are chosen with the \"Show on Homepage\" switch in 📅 Events and 🗳️ Elections.)"
+    description: "Homepage photos and text, the meeting line, and the image shown when pages are shared on social media. (Homepage events and candidates are chosen with the \"Show on Homepage\" switch in 📅 Events and 🗳️ Elections.)"
     files:
       - label: "Homepage Photos"
         name: "homepage"
@@ -138,6 +192,16 @@ collections:
         fields:
           - { label: "Top Photo", name: hero_image, widget: image, hint: "The large background photo at the top of the homepage. Also used as the preview image when the homepage is shared on social media." }
           - { label: "Top Photo Description", name: hero_image_alt, widget: string, hint: "A few words describing the photo, for screen readers and search engines." }
+          - label: "Monthly Meetings Line"
+            name: meeting_text
+            widget: string
+            required: false
+            hint: "Shown after \"Monthly Meetings —\" in the homepage's mission section. Leave blank for: 2nd Saturday of each month, 10 a.m. to noon. If meetings move around, try: Dates and locations are posted on our Events page."
+          - { label: "Mission Photo (large)", name: mission_photo_1, widget: image, required: false, hint: "The larger photo beside the mission text. Leave blank to keep the current photo." }
+          - { label: "Mission Photo (large) Description", name: mission_photo_1_alt, widget: string, required: false, hint: "A few words describing the photo, for screen readers." }
+          - { label: "Mission Photo (small)", name: mission_photo_2, widget: image, required: false, hint: "The smaller overlapping photo. Leave blank to keep the current photo." }
+          - { label: "Mission Photo (small) Description", name: mission_photo_2_alt, widget: string, required: false }
+          - { label: "Social Sharing Image", name: share_image, widget: image, required: false, hint: "The preview picture when any page other than the homepage is shared on Facebook, texts, etc. (The homepage uses its Top Photo.) Wide photos work best, about 1200 × 630. Leave blank to keep the office photo." }
           - label: "Photo Gallery"
             name: gallery_photos
             widget: list
@@ -157,10 +221,42 @@ collections:
                   - { label: "Tall", value: "tall" }
                   - { label: "Wide", value: "wide" }
 
+  # ── Leadership ────────────────────────────────────────────────────────────
+  - name: "leadership"
+    label: "👥 Leadership"
+    description: "The Club Leadership list on the homepage. Names only, with an optional title. During campaign season it sits under the mission section; in Off-Season Mode it takes over the Visit Us spot at the bottom of the homepage, with a photo. Hidden until Show Leadership is switched on."
+    files:
+      - label: "Club Leadership"
+        name: "leadership"
+        file: "_data/leadership.json"
+        fields:
+          - label: "Show Leadership"
+            name: show_leadership
+            widget: boolean
+            required: false
+            default: false
+            hint: "Turn on to show the Club Leadership section on the homepage. In Off-Season Mode a \"Leadership\" link also appears in the menu, where Visit Us used to be."
+          - label: "Intro Text"
+            name: intro
+            widget: string
+            required: false
+            hint: "One line under the heading. Leave blank for: The volunteers who lead NEBCD and keep the club running."
+          - { label: "Photo (off-season)", name: photo, widget: image, required: false, hint: "The photo beside the leadership names at the bottom of the homepage in Off-Season Mode. A group photo works best. Leave blank for the courthouse group photo." }
+          - { label: "Photo Description", name: photo_alt, widget: string, required: false, hint: "A few words describing the photo, for screen readers." }
+          - label: "Leaders"
+            name: members
+            widget: list
+            label_singular: "Person"
+            summary: "{{fields.name}}"
+            hint: "Shown in this order. Drag to reorder, e.g. officers first."
+            fields:
+              - { label: "Name", name: name, widget: string }
+              - { label: "Title", name: title, widget: string, required: false, hint: "Optional, e.g. Chair or Treasurer. Leave blank to show the name only." }
+
   # ── Office & Contact ──────────────────────────────────────────────────────
   - name: "office"
     label: "📍 Office & Contact"
-    description: "The office address, phone, email and hours. These appear in several places at once: the homepage's Visit Us section, the Store, Sponsor and Volunteer pages, the legal pages, and search engine listings."
+    description: "The office address, phone, email and hours. These appear in several places at once: the homepage's Visit Us section, the Store, Sponsor and Volunteer pages, the legal pages, and search engine listings. In ⚙️ Site Mode → Off-Season Mode the address and hours are hidden but kept here for next season."
     files:
       - label: "Office & Contact Info"
         name: "office"
@@ -168,7 +264,7 @@ collections:
         fields:
           - { label: "Street Address", name: office_address_street, widget: string, hint: "e.g. 6521 San Pedro Ave." }
           - { label: "City, State, ZIP", name: office_address_city, widget: string, hint: "e.g. San Antonio, TX 78216" }
-          - { label: "Phone", name: office_phone, widget: string, hint: "e.g. 210-917-1790. Tap-to-call links are set up from this automatically." }
+          - { label: "Phone", name: office_phone, widget: string, required: false, hint: "e.g. 210-917-1790. Tap-to-call links are set up from this automatically. Leave blank to remove the phone number and every Call button from the site." }
           - { label: "Email", name: office_email, widget: string, hint: "Shown on contact links across the site, e.g. info@nebcd.org" }
           - { label: "Hours, Line 1", name: office_hours_line1, widget: string, hint: "e.g. Mon–Tue & Thu–Fri: 8 AM – 4 PM. Lines 1 and 2 also appear on the Store page." }
           - { label: "Hours, Line 2", name: office_hours_line2, widget: string, required: false, hint: "e.g. Wednesday: 8 AM – 7 PM" }
@@ -192,13 +288,13 @@ collections:
           - { label: "Facebook Page", name: facebook_url, widget: string, hint: "Footer link on every page." }
           - { label: "Instagram Page", name: instagram_url, widget: string, hint: "Footer link on every page." }
           - { label: "Get Involved Link", name: get_involved_url, widget: string, hint: "Where the \"Get Involved\" link in the header and footer goes." }
-          - { label: "Mobilize Page", name: mobilize_url, widget: string, hint: "The \"View All Shifts on Mobilize\" button on the Events page, e.g. https://www.mobilize.us/nebcd/" }
+          - { label: "Mobilize Page", name: mobilize_url, widget: string, hint: "The \"View All Shifts on Mobilize\" button on the Events page, e.g. https://www.mobilize.us/nebcd/. Mobilize shows during campaign season, and in the off-season only if ⚙️ Site Mode → Keep Mobilize On in Off-Season is switched on." }
           - { label: "Volunteer Form ID (Google Form)", name: volunteer_form_id, widget: string, hint: "The form shown on the Volunteer page. In Google Forms, click Send → < > (embed) and copy the long code between /d/e/ and /viewform." }
 
   # ── Store ──────────────────────────────────────────────────────────────────
   - name: store
     label: "🛍️ Store"
-    description: "The Store page: its intro text and the items shown. Store hours and address come from 📍 Office & Contact."
+    description: "The Store page: its intro text and the items shown. Store hours and address come from 📍 Office & Contact. The store is shown during campaign season only; in Off-Season Mode (⚙️ Site Mode) the page shows a \"closed for now\" notice and everything here is kept for next time."
     files:
       - name: store
         label: Store Text & Items
@@ -289,6 +385,18 @@ collections:
         name: "site-mode"
         file: "_data/site-mode.json"
         fields:
+          - label: "Off-Season Mode"
+            name: off_season
+            widget: boolean
+            required: false
+            default: false
+            hint: "Turn ON after the election when the office closes. This hides the office (Visit Us section, address, hours), the Store and the Mobilize shifts all at once (Mobilize can be kept on with the next switch), and the homepage fills with upcoming events instead. Nothing is deleted. Turn it OFF again before the next primary to bring it all back."
+          - label: "Keep Mobilize On in Off-Season"
+            name: mobilize_off_season
+            widget: boolean
+            required: false
+            default: false
+            hint: "Mobilize shifts always show during campaign season. Turn this on only if the club is using Mobilize while Off-Season Mode is on."
           - label: "Election Page Mode"
             name: endorsements_page_mode
             widget: select
@@ -297,7 +405,9 @@ collections:
             options:
               - { label: "Endorsements (before the primary)", value: "endorsements" }
               - { label: "Election Guide (after the primary)", value: "election" }
-            hint: "Changes the Election page's title, headings and search/social previews, the nav link on every page, and the homepage section. The page address stays nebcd.org/endorsements. Remember to update the Intro Text in 🗳️ Elections to match."
+              - { label: "Connect With Your Representatives (after results are final; menu link reads \"Find Your Reps\")", value: "representatives" }
+              - { label: "Hidden (page taken down)", value: "hidden" }
+            hint: "Changes the Election page's title, headings and search/social previews, the nav link on every page, and the homepage section. The page address stays nebcd.org/endorsements. Each mode has its own intro text in 🗳️ Elections → Election Page Text. Hidden removes the page from the nav and homepage and shows a short notice at its address."
           - label: "🎉 Fundraiser Callout (Homepage + Events Page)"
             name: fundraiser
             widget: object
