@@ -713,6 +713,18 @@ function renderPlain(template, replacements = {}) {
   return out;
 }
 
+// ── Homepage band colors ───────────────────────────────────────────────────
+// Every visible homepage section marked "home-band" gets beige / white in turn,
+// starting with beige, so two sections next to each other never match.
+function alternateBands(html) {
+  let n = 0;
+  return html.replace(/<section class="([^"]*\bhome-band\b[^"]*)"/g, (m, classes) => {
+    const base = classes.split(/\s+/).filter(c => c && c !== 'section-alt');
+    if (n++ % 2 === 0) base.push('section-alt');
+    return `<section class="${base.join(' ')}"`;
+  });
+}
+
 // ── Nav label sync ─────────────────────────────────────────────────────────
 // Safety net: rewrites the text of plain nav/footer links to endorsements.html
 // so every page matches the current mode, even if a template was hand-edited
@@ -865,7 +877,7 @@ function buildFundraiserSection() {
 
   return `
     <!-- FUNDRAISER CALLOUT (admin-toggled via CMS: ⚙️ Site Mode → Fundraiser Callout) -->
-    <section class="fundraiser-callout" id="fundraiser">
+    <section class="fundraiser-callout home-band" id="fundraiser">
       <div class="container">
         <div class="fundraiser-card">
           ${photoHtml ? `<div class="fundraiser-photo-col">${photoHtml}</div>` : ''}
@@ -1184,7 +1196,8 @@ for (const page of pages) {
 
   if (fs.existsSync(templatePath)) {
     console.log(`Building ${outputPath}${page.template ? ' (closed-for-now notice)' : ''}...`);
-    const html = render(fs.readFileSync(templatePath, 'utf8'), page.values());
+    let html = render(fs.readFileSync(templatePath, 'utf8'), page.values());
+    if (page.file === 'index') html = alternateBands(html);
     fs.writeFileSync(`${SITE_DIR}/${outputPath}`, syncNavLabel(html));
     console.log(`  ✓ ${outputPath}`);
   } else if (fs.existsSync(outputPath)) {

@@ -72,6 +72,16 @@
 
   <!-- ── Styles ── -->
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Homepage bands alternate beige / white automatically: build.js marks every
+       other visible section "section-alt", so neighbors never share a color
+       whichever sections the seasonal switches show or hide. */
+    .home-band { background: var(--warm-white); }
+    .home-band.section-alt { background: var(--warm-gray); }
+    /* Beige cards turn white when they land on a beige band, so they stay visible */
+    .section-alt .endorsement-card,
+    .section-alt .mission-meeting { background: white; }
+  </style>
   {{#if SHOW_LEADERSHIP}}
   <style>
     /* Club Leadership section (homepage) */
@@ -149,7 +159,7 @@
     {{FUNDRAISER_SECTION}}
 
     <!-- EVENTS PREVIEW -->
-    <section class="events-preview section-alt" id="events-preview">
+    <section class="events-preview home-band" id="events-preview">
       <div class="container">
         <div class="section-header">
           <span class="eyebrow">Mission in Action</span>
@@ -166,7 +176,7 @@
     </section>
 
     <!-- MISSION -->
-    <section class="mission" id="mission">
+    <section class="mission home-band" id="mission">
       <div class="container">
         <div class="mission-grid">
           <div class="mission-text">
@@ -188,7 +198,7 @@
 
     {{#if LEADERSHIP_LIST_ON}}
     <!-- CLUB LEADERSHIP, campaign season (👥 Leadership in the admin; the nav's "About" link lands just above it) -->
-    <section class="leadership-section section-alt" id="leadership">
+    <section class="leadership-section home-band" id="leadership">
       <div class="container">
         <div class="section-header">
           <span class="eyebrow">Who We Are</span>
@@ -203,7 +213,7 @@
     {{/if LEADERSHIP_LIST_ON}}
     {{#if ELECTION_PAGE_ON}}
     <!-- ELECTION PREVIEW (wording and cards switch with ⚙️ Site Mode → Election Page Mode) -->
-    <section class="endorsements-preview" id="endorsements-preview">
+    <section class="endorsements-preview home-band" id="endorsements-preview">
       <div class="container">
         <div class="section-header">
           <span class="eyebrow">Mission in Action</span>
@@ -221,7 +231,7 @@
     {{/if ELECTION_PAGE_ON}}
 
     <!-- GET INVOLVED -->
-    <section class="get-involved-section section-alt" id="get-involved">
+    <section class="get-involved-section home-band" id="get-involved">
       <div class="container">
         <div class="section-header">
           <span class="eyebrow">Get Involved</span>
@@ -252,7 +262,7 @@
     </section>
 
     <!-- PHOTO GALLERY -->
-    <section class="photo-gallery">
+    <section class="photo-gallery home-band">
       <div class="container">
         <div class="section-header">
           <span class="eyebrow">Community in Action</span>
