@@ -91,11 +91,12 @@
   ],
   "office_address_street": "6521 San Pedro Ave.",
   "actblue_donate_url": "https://secure.actblue.com/donate/north-east-bexar-county-democrats-pac-1",
-  "endorsements_intro": "NEBCD proudly endorses these candidates for the 2026 election cycle.",
+  "endorsements_intro": "In an effort to prepare you for the election, NEBCD was compiled the list of candidates affecting most people in our immediate area. Make a plan to vote! ",
   "facebook_url": "https://www.facebook.com/NEBCD/",
   "hero_image": "assets/NEBCD-Office.webp",
   "office_email": "info@nebcd.org",
   "office_address_city": "San Antonio, TX 78216",
+  "endorsements_page_mode": "election",
   "visit_photo": "assets/NEBCD-Office-Lausanne.webp",
   "office_phone_href": "2109171790"
 }
