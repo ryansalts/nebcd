@@ -1,0 +1,41 @@
+{
+  "hero_image": "assets/NEBCD-Office.webp",
+  "hero_image_alt": "NEBCD Office exterior",
+  "gallery_photos": [
+    {
+      "src": "assets/nebcd-event-music.webp",
+      "alt": "Live music at an NEBCD community event",
+      "size": "tall"
+    },
+    {
+      "src": "assets/nebcd-court-box.webp",
+      "alt": "NEBCD members in the Bexar County courtroom gallery",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-judge-kazen.webp",
+      "alt": "NEBCD members with Judge Kazen",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-key-court.webp",
+      "alt": "NEBCD group at Bexar County Courthouse",
+      "size": "wide"
+    },
+    {
+      "src": "assets/nebcd-judge-scharf-zeldes.webp",
+      "alt": "NEBCD members with Judge Scharf-Zeldes",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-torres-group.webp",
+      "alt": "NEBCD members at a community event",
+      "size": "normal"
+    },
+    {
+      "src": "assets/nebcd-monique-diaz-group.webp",
+      "alt": "NEBCD team members with Judge Monique Diaz",
+      "size": "wide"
+    }
+  ]
+}

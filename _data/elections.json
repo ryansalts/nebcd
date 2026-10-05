@@ -1,0 +1,34 @@
+{
+  "endorsements_cycle_label": "2026",
+  "endorsements_intro": "In an effort to prepare you for the election, NEBCD was compiled the list of candidates affecting most people in our immediate area. Make a plan to vote! ",
+  "voting_resources": [
+    {
+      "icon": "🗳️",
+      "title": "Check Your Registration",
+      "description": "Verify your voter registration, find your polling location, and view your individual sample ballot.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/2229/Voter-Registration-Check-Polling-Locatio"
+    },
+    {
+      "icon": "📋",
+      "title": "Vote by Mail",
+      "description": "Find out if you're eligible to vote by mail, download the application, and track your ballot status.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/3271/Vote-by-Mail"
+    },
+    {
+      "icon": "📋",
+      "title": "League of Women Voters Guide",
+      "description": "Nonpartisan candidate info from the League of Women Voters. Read candidates' answers in their own words before you vote.",
+      "link_label": "lwvsa.org →",
+      "url": "https://lwvsa.org/"
+    },
+    {
+      "icon": "🏛️",
+      "title": "Bexar County Elections",
+      "description": "Full information from the Bexar County Elections Department — early voting, locations, hours, and more.",
+      "link_label": "bexar.org →",
+      "url": "https://www.bexar.org/1568/Elections-Department"
+    }
+  ]
+}

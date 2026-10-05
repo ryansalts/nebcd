@@ -1,0 +1,13 @@
+{
+  "endorsements_page_mode": "election",
+  "fundraiser": {
+    "enabled": false,
+    "eyebrow": "Fundraiser",
+    "headline": "27th Annual Labor Day Picnic",
+    "description": "North East Bexar County Democrats (NEBCD) is holding its 27th Annual Labor Day Picnic to celebrate the contributions of all of us who work for our families and communities every day. Former Mayor Ron Nirenberg will be the featured speaker. NEBCD will honor a Labor Woman and Labor Man of the Year who have given a life time of service to unions for the advancement of all workers. Jim Chesnut, local indie musical artist, will perform.",
+    "photo": "assets/nebcd-nancy-event.webp",
+    "photo_alt": "Guests at a past Dining with Democrats fundraiser",
+    "button_label": "Get Tickets →",
+    "button_url": "https://secure.actblue.com/donate/2026ldp"
+  }
+}

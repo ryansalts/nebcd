@@ -4,82 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!--
-    STARTER FOR NEW PAGES
-    1. Copy this file and name it  your-page.template.html  (e.g. news.template.html)
-    2. Add the page to the "pages" list near the bottom of build.js:
-         { file: 'your-page', values: () => ({}) },
-    3. The build fills in every {{PLACEHOLDER}} (nav, footer, links, office info,
-       copyright year) from the CMS automatically, and writes your-page.html.
-    Don't type links, phone numbers or the year directly. Use the placeholders.
-  -->
-
   <!-- ── Favicon ── -->
   <link rel="icon" type="image/png" href="assets/NEBCD-favicon.webp" />
   <link rel="apple-touch-icon" href="assets/NEBCD-favicon.webp" />
 
-  <!-- ════════════════════════════════════════════════════
-       PAGE-SPECIFIC SEO — update all fields below for each new page
-       ════════════════════════════════════════════════════ -->
-
-  <!-- ── Primary SEO ── -->
-  <title>PAGE TITLE | North East Bexar County Democrats</title>
-  <meta name="description" content="PAGE DESCRIPTION — 150–160 characters. Specific to this page's content." />
-  <meta name="keywords" content="NEBCD, keyword1, keyword2, keyword3" />
-  <link rel="canonical" href="https://www.nebcd.org/PAGE-SLUG" />
-
-  <!--
-    For legal/utility pages that should NOT appear in search results, replace the
-    canonical tag above with:
-    <meta name="robots" content="noindex, nofollow" />
-  -->
-
-  <!-- ── Open Graph ── -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.nebcd.org/PAGE-SLUG" />
-  <meta property="og:site_name" content="North East Bexar County Democrats" />
-  <meta property="og:title" content="PAGE TITLE | NEBCD" />
-  <meta property="og:description" content="PAGE DESCRIPTION for social sharing." />
-  <meta property="og:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:locale" content="en_US" />
-
-  <!-- ── Twitter Card ── -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="PAGE TITLE | NEBCD" />
-  <meta name="twitter:description" content="PAGE DESCRIPTION for social sharing." />
-  <meta name="twitter:image" content="https://www.nebcd.org/assets/NEBCD-Office.webp" />
-
-  <!-- ── Schema.org ── -->
-  <!--
-    Replace the stub below with the appropriate schema type for this page.
-    Common types for NEBCD pages:
-      - WebPage          (generic pages)
-      - Event            (single event pages)
-      - ItemList         (event lists, endorsement lists)
-      - Person           (candidate profile pages)
-      - VolunteerAction  (volunteer pages)
-    Reference: https://schema.org
-  -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "PAGE TITLE",
-    "description": "PAGE DESCRIPTION",
-    "url": "https://www.nebcd.org/PAGE-SLUG",
-    "isPartOf": {
-      "@type": "WebSite",
-      "name": "North East Bexar County Democrats",
-      "url": "https://www.nebcd.org"
-    }
-  }
-  </script>
-
-  <!-- ════════════════════════════════════════════════════
-       SHARED — do not modify below this line unless GTM ID changes
-       ════════════════════════════════════════════════════ -->
+  <!-- ── Primary SEO (noindex — legal page) ── -->
+  <title>SMS Terms &amp; Conditions | North East Bexar County Democrats</title>
+  <meta name="description" content="SMS Terms &amp; Conditions for North East Bexar County Democrats text messaging programs." />
+  <meta name="robots" content="noindex, nofollow" />
 
   <!-- ── Google Tag Manager ── -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -103,7 +35,6 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
-  <!-- ── SHARED NAV — do not modify ── -->
   <header class="site-header" id="site-header">
     <nav class="nav-inner">
       <a href="index.html" class="nav-logo">
@@ -126,23 +57,47 @@
 
   <main>
 
-    <!-- ── PAGE HERO — update breadcrumb, eyebrow, h1, and description ── -->
     <div class="page-hero">
       <div class="page-hero-inner">
         <nav class="breadcrumb" aria-label="Breadcrumb">
-          <a href="index.html">Home</a><span>›</span><span>PAGE NAME</span>
+          <a href="index.html">Home</a>
+          <span>›</span>
+          <span>Terms &amp; Conditions</span>
         </nav>
-        <span class="eyebrow">EYEBROW LABEL</span>
-        <h1>PAGE HEADING</h1>
-        <p>Page intro description.</p>
+        <h1>Terms &amp; Conditions</h1>
       </div>
     </div>
 
-    <!-- ── PAGE CONTENT GOES HERE ── -->
+    <div class="legal-body" data-cms="true" data-collection="legal">
+
+      <h2>SMS Terms &amp; Conditions</h2>
+
+      <p>North East Bexar County Democrats' mobile campaigns provide subscribers with updates, event invitations, donation asks, and voting reminders.</p>
+
+      <h3>Canceling SMS</h3>
+      <p>You can cancel the SMS service at any time. Just text <strong>STOP</strong>. After this, you will no longer receive SMS messages from us. If you want to join again, just sign up as you did the first time and we will start sending SMS messages to you again.</p>
+
+      <h3>Help</h3>
+      <p>If you are experiencing issues with the messaging program you can reply with the keyword <strong>HELP</strong> for more assistance, or you can get help directly by emailing <a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a>.</p>
+
+      <h3>Carrier Liability</h3>
+      <p>Carriers are not liable for delayed or undelivered messages. T-Mobile is not liable for delayed or undelivered messages.</p>
+
+      <h3>Message Frequency</h3>
+      <p>You can expect to receive no more than 3 text message(s) per month from North East Bexar County Democrats.</p>
+
+      <h3>Message &amp; Data Rates</h3>
+      <p>Message and data rates may apply for any messages sent to you from us and to us from you. If you have any questions about your text plan or data plan, it is best to contact your wireless provider.</p>
+
+      <h3>Privacy</h3>
+      <p>If you have any questions regarding privacy, please read our <a href="privacy.html">Privacy Policy</a>.</p>
+
+      <p class="legal-meta">Last updated: 2026 · North East Bexar County Democrats · <a href="mailto:{{OFFICE_EMAIL}}">{{OFFICE_EMAIL}}</a></p>
+
+    </div>
 
   </main>
 
-  <!-- ── SHARED FOOTER — do not modify ── -->
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-brand">
@@ -182,9 +137,6 @@
     </div>
   </footer>
 
-  <!-- ── SCRIPTS ── -->
-  <!-- main.js is required on every page — handles nav, animations, and active states -->
   <script src="main.js"></script>
-
 </body>
 </html>

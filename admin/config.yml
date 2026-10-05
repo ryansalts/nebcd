@@ -10,13 +10,26 @@ backend:
 media_folder: "assets"
 public_folder: "assets"
 
+# ─────────────────────────────────────────────────────────────────────────────
+# How the admin is organized (one screen per job):
+#   📅 Events            → _data/events.json
+#   🗳️ Elections         → _data/endorsements.json + _data/elections.json
+#   🏠 Homepage          → _data/homepage.json
+#   📍 Office & Contact  → _data/office.json
+#   🔗 Links & Accounts  → _data/links.json
+#   🛍️ Store             → _data/store.json
+#   🤝 Sponsor           → _data/sponsor.json
+#   ⚙️ Site Mode         → _data/site-mode.json  (on/off switches)
+# Every save rebuilds the site; changes are live in about a minute.
+# ─────────────────────────────────────────────────────────────────────────────
+
 collections:
 
   # ── Events ────────────────────────────────────────────────────────────────
   - name: "events"
     label: "📅 Events"
     label_singular: "Event"
-    description: "Add, edit, or remove events. Events are sorted by date automatically."
+    description: "Events shown on the Events page and the homepage. They're sorted by date automatically, and past events disappear from the site on their own the day after they happen, so there's no need to delete old ones."
     files:
       - label: "Events List"
         name: "events"
@@ -30,182 +43,197 @@ collections:
             fields:
               - { label: "Event Title", name: title, widget: string }
               - { label: "Date", name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "MMMM D, YYYY", time_format: false }
-              - { label: "Time", name: time, widget: string, hint: "e.g. 10:00 AM – Noon or 5:30 PM" }
+              - { label: "Time", name: time, widget: string, hint: "Typed exactly as it should appear, e.g. 10:00 AM – Noon or 5:30 PM" }
               - label: "Event Type"
                 name: type
                 widget: select
+                hint: "Sets the colored tag on the event. Election events are highlighted in red."
                 options:
                   - { label: "Meeting", value: "Meeting" }
                   - { label: "Volunteer", value: "Volunteer" }
                   - { label: "Social", value: "Social" }
                   - { label: "Election", value: "Election" }
               - { label: "Location", name: location, widget: string, hint: "e.g. NEBCD Office — 6521 San Pedro Ave. or Zoom (link sent after RSVP)" }
-              - { label: "Description", name: description, widget: text }
-              - { label: "Button Label", name: button_label, widget: string, hint: "e.g. RSVP or Sign Up on Mobilize" }
-              - { label: "Button URL", name: button_url, widget: string, hint: "Use # if no URL yet" }
-              - label: "Featured on Homepage"
+              - { label: "Description", name: description, widget: text, hint: "One or two sentences about the event." }
+              - { label: "Button Label", name: button_label, widget: string, hint: "Text on the event's button, e.g. RSVP or Sign Up on Mobilize" }
+              - { label: "Button Link", name: button_url, widget: string, hint: "Full web address for the button. Use # if there's no link yet." }
+              - label: "Show on Homepage"
                 name: featured
                 widget: boolean
                 default: false
-                hint: "Show this event in the homepage preview (max 3 featured events shown)"
+                hint: "Turn on to show this event in the homepage's Upcoming Events section. Up to 3 are shown; any open spots are filled with upcoming Mobilize shifts."
 
-  # ── Endorsements ──────────────────────────────────────────────────────────
-  - name: "endorsements"
-    label: "🗳️ Endorsements"
-    label_singular: "Endorsed Candidate"
-    description: "Add, edit, or remove endorsed candidates. Grouped automatically by election on the endorsements page."
+  # ── Elections ─────────────────────────────────────────────────────────────
+  - name: "elections"
+    label: "🗳️ Elections"
+    description: "Everything on the Election page (nebcd.org/endorsements): the candidates, the intro text and the voting resources. To switch the page between Endorsements and Election Guide, go to ⚙️ Site Mode."
     files:
-      - label: "Endorsements List"
+      - label: "Candidates"
         name: "endorsements"
         file: "_data/endorsements.json"
         fields:
-          - label: "Endorsed Candidates"
+          - label: "Candidates"
             name: "endorsements"
             widget: list
             label_singular: "Candidate"
             summary: "{{fields.name}} — {{fields.office}}"
             fields:
               - { label: "Candidate Name", name: name, widget: string }
-              - { label: "Office / Race", name: office, widget: string, hint: "e.g. NEISD Board of Trustees or Candidate for Attorney General" }
-              - { label: "Race Badge", name: race_badge, widget: string, required: false, hint: "Short label shown on card, e.g. District 3 or Place 4. Leave blank for runoff candidates." }
+              - { label: "Office / Race", name: office, widget: string, hint: "Shown under the name, e.g. NEISD Board of Trustees or Attorney General" }
+              - { label: "Race Badge", name: race_badge, widget: string, required: false, hint: "Short label on the card, e.g. District 3 or Place 4. Leave blank for runoff candidates." }
               - label: "Election"
                 name: election
                 widget: select
+                hint: "Which section of the page the candidate appears in."
                 options:
                   - { label: "General Election", value: "general" }
                   - { label: "Primary", value: "primary" }
                   - { label: "Runoff", value: "runoff" }
-              - { label: "Race Group", name: race_group, widget: string, required: false, hint: "Groups candidates under a heading, e.g. North East ISD Board of Trustees. Leave blank for runoff candidates." }
-              - { label: "Photo", name: photo, widget: image, required: false, hint: "Upload candidate photo. Leave blank if unavailable." }
-              - { label: "Campaign Website", name: campaign_url, widget: string, required: false, hint: "Full URL including https://" }
-              - { label: "Co-Endorsers", name: co_endorsers, widget: string, required: false, hint: "Comma-separated list of other endorsing organizations" }
-              - { label: "Facebook URL", name: facebook_url, widget: string, required: false }
-              - { label: "Instagram URL", name: instagram_url, widget: string, required: false }
-              - label: "Featured on Homepage"
+              - { label: "Race Group", name: race_group, widget: string, required: false, hint: "Candidates with the same Race Group are shown together under that heading, e.g. Texas House. Leave blank for runoff candidates." }
+              - { label: "Photo", name: photo, widget: image, required: false, hint: "Candidate headshot. Leave blank if you don't have one." }
+              - { label: "Campaign Website", name: campaign_url, widget: string, required: false, hint: "Full web address including https://" }
+              - { label: "Co-Endorsers", name: co_endorsers, widget: string, required: false, hint: "Other organizations that endorse this candidate, separated by commas. Shown as \"Also endorsed by…\"" }
+              - { label: "Facebook Link", name: facebook_url, widget: string, required: false }
+              - { label: "Instagram Link", name: instagram_url, widget: string, required: false }
+              - label: "Show on Homepage"
                 name: featured
                 widget: boolean
                 default: false
-                hint: "Show this candidate in the homepage endorsements preview (max 4 featured shown)"
+                hint: "Turn on to show this candidate in the homepage's election section. Up to 4 are shown."
 
-  # ── Site Settings ──────────────────────────────────────────────────────────
-  - name: "settings"
-    label: "⚙️ Site Settings"
-    description: "Office info, hours, hero image, social links, and ActBlue URLs."
-    files:
-      - label: "Office & Contact"
-        name: "office"
-        file: "_data/settings.json"
+      - label: "Election Page Text & Voting Resources"
+        name: "election-page"
+        file: "_data/elections.json"
         fields:
-          - label: "🎉 Fundraiser Callout (Homepage + Events Page)"
-            name: fundraiser
-            widget: object
-            hint: "Toggle on to show a fundraiser callout card on the homepage and Events page. Toggle off to hide it on both without losing the content."
-            fields:
-              - { label: "Show Callout", name: enabled, widget: boolean, default: false, hint: "Turn this on when a fundraiser is active — turn it off when it's over. Updates both pages at once." }
-              - { label: "Eyebrow Label", name: eyebrow, widget: string, default: "Fundraiser", hint: "Small label above the headline, e.g. Fundraiser or Save the Date" }
-              - { label: "Headline", name: headline, widget: string, hint: "e.g. Dining with Democrats 2026" }
-              - { label: "Description", name: description, widget: text, hint: "A sentence or two about the event and what it supports." }
-              - { label: "Photo", name: photo, widget: image, required: false }
-              - { label: "Photo Alt Text", name: photo_alt, widget: string, required: false }
-              - { label: "Button Label", name: button_label, widget: string, hint: "e.g. Get Tickets → or Sponsor This Event →" }
-              - { label: "Button URL", name: button_url, widget: string, hint: "Ticket link, ActBlue page, or sponsor.html" }
-          - { label: "Street Address", name: office_address_street, widget: string }
-          - { label: "City, State, ZIP", name: office_address_city, widget: string }
-          - { label: "Phone (display)", name: office_phone, widget: string, hint: "e.g. 210-917-1790" }
-          - { label: "Phone (href, digits only)", name: office_phone_href, widget: string, hint: "e.g. 2109171790" }
-          - { label: "Email", name: office_email, widget: string }
-          - { label: "Hours Line 1", name: office_hours_line1, widget: string, hint: "e.g. Mon–Tue & Thu–Fri: 8 AM – 4 PM" }
-          - { label: "Hours Line 2", name: office_hours_line2, widget: string, hint: "e.g. Wednesday: 8 AM – 7 PM" }
-          - { label: "Hours Line 3", name: office_hours_line3, widget: string, hint: "e.g. Sat–Sun: Closed (except events)" }
-          - { label: "Google Maps URL", name: office_directions_url, widget: string }
-          - { label: "Hero Image", name: hero_image, widget: image, hint: "Background photo for the homepage hero section" }
-          - { label: "Hero Image Alt Text", name: hero_image_alt, widget: string }
-          - { label: "Visit Section Photo", name: visit_photo, widget: image, hint: "Photo shown in the Visit Us section" }
-          - { label: "Visit Section Photo Alt Text", name: visit_photo_alt, widget: string }
-          - { label: "Visit Section Description", name: visit_description, widget: text }
-          - { label: "ActBlue Dues / Membership URL", name: actblue_dues_url, widget: string }
-          - { label: "ActBlue Donate URL", name: actblue_donate_url, widget: string }
-          - { label: "Facebook URL", name: facebook_url, widget: string }
-          - { label: "Instagram URL", name: instagram_url, widget: string }
-          - { label: "Mobilize Volunteer URL", name: mobilize_url, widget: string }
-          - { label: "Google Form ID (Volunteer)", name: volunteer_form_id, widget: string, hint: "The long ID from the Google Form embed URL" }
-          - label: "Endorsements Page Mode"
-            name: endorsements_page_mode
-            widget: select
+          - label: "Election Year"
+            name: endorsements_cycle_label
+            widget: string
             required: false
-            default: "endorsements"
-            options:
-              - { label: "Endorsements", value: "endorsements" }
-              - { label: "Election Guide", value: "election" }
-            hint: "Switch to Election Guide after the primary. Changes the page title, headings, nav link on every page, homepage section, and search/social metadata. The page address stays /endorsements. Remember to update the Endorsements Intro below to match."
-          - { label: "Endorsements Cycle Label", name: endorsements_cycle_label, widget: string, hint: "e.g. 2026 — appears in page titles and headings" }
-          - { label: "Endorsements Intro", name: endorsements_intro, widget: text, hint: "Short intro shown on the homepage and endorsements page hero" }
-          - label: "Gallery Photos"
-            name: gallery_photos
-            widget: list
-            label_singular: "Photo"
-            summary: "{{fields.alt}}"
-            fields:
-              - { label: "Photo", name: src, widget: image }
-              - { label: "Alt Text", name: alt, widget: string }
-              - label: "Size"
-                name: size
-                widget: select
-                options:
-                  - { label: "Normal", value: "normal" }
-                  - { label: "Tall", value: "tall" }
-                  - { label: "Wide", value: "wide" }
+            hint: "Used in the Election page title and headings, e.g. 2026. Leave blank to use the current year automatically."
+          - label: "Intro Text"
+            name: endorsements_intro
+            widget: text
+            hint: "Short intro shown at the top of the Election page and in the homepage's election section. Update it when you switch between Endorsements and Election Guide in ⚙️ Site Mode."
           - label: "Voting Resources"
             name: voting_resources
             widget: list
             label_singular: "Resource"
             summary: "{{fields.title}}"
+            hint: "The \"Know Before You Vote\" cards on the Election page."
             fields:
-              - { label: "Icon (emoji)", name: icon, widget: string, hint: "e.g. 🗳️" }
+              - { label: "Icon (emoji)", name: icon, widget: string, hint: "One emoji, e.g. 🗳️" }
               - { label: "Title", name: title, widget: string }
               - { label: "Description", name: description, widget: text }
-              - { label: "Link Label", name: link_label, widget: string, hint: "e.g. bexar.org →" }
-              - { label: "URL", name: url, widget: string }
+              - { label: "Link Label", name: link_label, widget: string, hint: "Small link text at the bottom of the card, e.g. bexar.org →" }
+              - { label: "Link", name: url, widget: string, hint: "Full web address including https://" }
+
+  # ── Homepage ──────────────────────────────────────────────────────────────
+  - name: "homepage"
+    label: "🏠 Homepage"
+    description: "The big photo at the top of the homepage and the photo gallery. (Homepage events and candidates are chosen with the \"Show on Homepage\" switch in 📅 Events and 🗳️ Elections.)"
+    files:
+      - label: "Homepage Photos"
+        name: "homepage"
+        file: "_data/homepage.json"
+        fields:
+          - { label: "Top Photo", name: hero_image, widget: image, hint: "The large background photo at the top of the homepage. Also used as the preview image when the homepage is shared on social media." }
+          - { label: "Top Photo Description", name: hero_image_alt, widget: string, hint: "A few words describing the photo, for screen readers and search engines." }
+          - label: "Photo Gallery"
+            name: gallery_photos
+            widget: list
+            label_singular: "Photo"
+            summary: "{{fields.alt}}"
+            hint: "The \"NEBCD in the Community\" photo grid. Drag photos to reorder them."
+            fields:
+              - { label: "Photo", name: src, widget: image }
+              - { label: "Photo Description", name: alt, widget: string, hint: "A few words describing the photo, e.g. NEBCD members at the Labor Day Picnic" }
+              - label: "Size"
+                name: size
+                widget: select
+                default: "normal"
+                hint: "Tall and Wide photos take up two spaces in the grid. Mix a few in for variety."
+                options:
+                  - { label: "Normal", value: "normal" }
+                  - { label: "Tall", value: "tall" }
+                  - { label: "Wide", value: "wide" }
+
+  # ── Office & Contact ──────────────────────────────────────────────────────
+  - name: "office"
+    label: "📍 Office & Contact"
+    description: "The office address, phone, email and hours. These appear in several places at once: the homepage's Visit Us section, the Store, Sponsor and Volunteer pages, the legal pages, and search engine listings."
+    files:
+      - label: "Office & Contact Info"
+        name: "office"
+        file: "_data/office.json"
+        fields:
+          - { label: "Street Address", name: office_address_street, widget: string, hint: "e.g. 6521 San Pedro Ave." }
+          - { label: "City, State, ZIP", name: office_address_city, widget: string, hint: "e.g. San Antonio, TX 78216" }
+          - { label: "Phone", name: office_phone, widget: string, hint: "e.g. 210-917-1790. Tap-to-call links are set up from this automatically." }
+          - { label: "Email", name: office_email, widget: string, hint: "Shown on contact links across the site, e.g. info@nebcd.org" }
+          - { label: "Hours, Line 1", name: office_hours_line1, widget: string, hint: "e.g. Mon–Tue & Thu–Fri: 8 AM – 4 PM. Lines 1 and 2 also appear on the Store page." }
+          - { label: "Hours, Line 2", name: office_hours_line2, widget: string, required: false, hint: "e.g. Wednesday: 8 AM – 7 PM" }
+          - { label: "Hours, Line 3", name: office_hours_line3, widget: string, required: false, hint: "e.g. Sat–Sun: Closed (except events)" }
+          - { label: "Google Maps Link", name: office_directions_url, widget: string, hint: "Used by every \"Get Directions\" button. Search the address in Google Maps, click Share, and paste the link here." }
+          - { label: "Visit Us Photo", name: visit_photo, widget: image, hint: "Photo in the homepage's Visit Us section." }
+          - { label: "Visit Us Photo Description", name: visit_photo_alt, widget: string, hint: "A few words describing the photo, for screen readers." }
+          - { label: "Visit Us Text", name: visit_description, widget: text, hint: "The welcome paragraph in the homepage's Visit Us section." }
+
+  # ── Links & Accounts ──────────────────────────────────────────────────────
+  - name: "links"
+    label: "🔗 Links & Accounts"
+    description: "Donation links, social media and sign-up forms. Each link is used everywhere it appears on the site (header, footer and buttons), so changing it here updates every page."
+    files:
+      - label: "Links & Accounts"
+        name: "links"
+        file: "_data/links.json"
+        fields:
+          - { label: "Join / Membership Dues (ActBlue)", name: actblue_dues_url, widget: string, hint: "The \"Join / Donate\" button in the header and the \"Join on ActBlue\" button on the homepage." }
+          - { label: "Donate (ActBlue)", name: actblue_donate_url, widget: string, hint: "The \"Donate on ActBlue\" link in the footer of every page." }
+          - { label: "Facebook Page", name: facebook_url, widget: string, hint: "Footer link on every page." }
+          - { label: "Instagram Page", name: instagram_url, widget: string, hint: "Footer link on every page." }
+          - { label: "Get Involved Link", name: get_involved_url, widget: string, hint: "Where the \"Get Involved\" link in the header and footer goes." }
+          - { label: "Mobilize Page", name: mobilize_url, widget: string, hint: "The \"View All Shifts on Mobilize\" button on the Events page, e.g. https://www.mobilize.us/nebcd/" }
+          - { label: "Volunteer Form ID (Google Form)", name: volunteer_form_id, widget: string, hint: "The form shown on the Volunteer page. In Google Forms, click Send → < > (embed) and copy the long code between /d/e/ and /viewform." }
 
   # ── Store ──────────────────────────────────────────────────────────────────
   - name: store
     label: "🛍️ Store"
-    description: "Manage the store intro and product categories shown on the Store page."
+    description: "The Store page: its intro text and the items shown. Store hours and address come from 📍 Office & Contact."
     files:
       - name: store
-        label: Store Settings & Products
+        label: Store Text & Items
         file: _data/store.json
         fields:
           - label: Store Intro
             name: store_intro
             widget: text
-            hint: "Shown in the page hero under the heading. One or two sentences describing the store."
+            hint: "Shown at the top of the Store page. One or two sentences describing the store."
 
-          - label: Products
+          - label: Items
             name: products
             widget: list
-            label_singular: Product
+            label_singular: Item
             summary: "{{fields.name}}"
             fields:
-              - { label: "Product Name", name: name, widget: string, hint: "e.g. T-Shirts, Bumper Stickers, Buttons & Pins" }
-              - { label: "Description", name: description, widget: text, hint: "One or two sentences describing this product category." }
+              - { label: "Item Name", name: name, widget: string, hint: "e.g. T-Shirts, Bumper Stickers, Buttons & Pins" }
+              - { label: "Description", name: description, widget: text, hint: "One or two sentences about this item." }
               - label: Photo
                 name: photo
                 widget: image
                 required: false
-                hint: "Upload a photo of this product. Use WebP format if possible."
+                hint: "A photo of this item. WebP format loads fastest if you have it."
                 media_folder: /assets
                 public_folder: assets
-              - label: "Available"
+              - label: "Show on Store Page"
                 name: available
                 widget: boolean
                 default: true
-                hint: "Uncheck to hide this product from the page without deleting it."
+                hint: "Turn off to hide this item without deleting it."
 
   # ── Sponsor ────────────────────────────────────────────────────────────────
   - name: sponsor
     label: "🤝 Sponsor"
-    description: "Manage the sponsor page intro and sponsorship details for each signature event."
+    description: "The Sponsor page: its intro and the sponsorship details for each signature event."
     files:
       - name: sponsor
         label: Sponsor Page
@@ -214,7 +242,7 @@ collections:
           - label: Page Intro
             name: sponsor_intro
             widget: text
-            hint: "Shown in the page hero. One or two sentences about partnering with NEBCD."
+            hint: "Shown at the top of the Sponsor page. One or two sentences about partnering with NEBCD."
 
           - label: Sponsored Events
             name: events
@@ -222,18 +250,18 @@ collections:
             label_singular: Event
             summary: "{{fields.name}}"
             fields:
-              - { label: "Event ID", name: id, widget: string, hint: "URL-safe slug, no spaces. e.g. dining-with-democrats — used for anchor links." }
+              - { label: "Event ID", name: id, widget: string, hint: "Short name for links to this section: lowercase, dashes instead of spaces, e.g. dining-with-democrats. Set it once and don't change it." }
               - { label: "Event Name", name: name, widget: string, hint: "e.g. Dining with Democrats" }
-              - { label: "Eyebrow Label", name: eyebrow, widget: string, hint: "Small label above the event name. e.g. Signature Fundraiser" }
+              - { label: "Label Above Name", name: eyebrow, widget: string, hint: "Small label above the event name, e.g. Signature Fundraiser" }
               - { label: "Description", name: description, widget: text, hint: "A paragraph describing this event for potential sponsors." }
-              - { label: "Date", name: date, widget: string, required: false, hint: "e.g. Saturday, October 18, 2026. Leave blank if not yet confirmed." }
-              - { label: "Venue", name: venue, widget: string, required: false, hint: "Venue name and/or address. Leave blank if not yet confirmed." }
+              - { label: "Date", name: date, widget: string, required: false, hint: "e.g. Saturday, October 18, 2026. Leave blank if not confirmed yet." }
+              - { label: "Venue", name: venue, widget: string, required: false, hint: "Venue name and/or address. Leave blank if not confirmed yet." }
               - { label: "Expected Attendance", name: attendance, widget: string, required: false, hint: "e.g. Expected 150–200 guests" }
               - label: Event Photo
                 name: photo
                 widget: image
                 required: false
-                hint: "Optional photo for this event section."
+                hint: "Optional photo for this event's section."
                 media_folder: /assets
                 public_folder: assets
               - label: Sponsorship Levels
@@ -251,3 +279,35 @@ collections:
                       name: perk
                       widget: string
                     hint: "One perk per line. Add as many as needed."
+
+  # ── Site Mode ──────────────────────────────────────────────────────────────
+  - name: "site-mode"
+    label: "⚙️ Site Mode"
+    description: "Seasonal switches that change what the site shows. Each one updates every affected page at once, and can be switched back anytime."
+    files:
+      - label: "Site Mode Switches"
+        name: "site-mode"
+        file: "_data/site-mode.json"
+        fields:
+          - label: "Election Page Mode"
+            name: endorsements_page_mode
+            widget: select
+            required: false
+            default: "endorsements"
+            options:
+              - { label: "Endorsements (before the primary)", value: "endorsements" }
+              - { label: "Election Guide (after the primary)", value: "election" }
+            hint: "Changes the Election page's title, headings and search/social previews, the nav link on every page, and the homepage section. The page address stays nebcd.org/endorsements. Remember to update the Intro Text in 🗳️ Elections to match."
+          - label: "🎉 Fundraiser Callout (Homepage + Events Page)"
+            name: fundraiser
+            widget: object
+            hint: "A highlighted card for an upcoming fundraiser, shown on the homepage and the Events page while it's switched on. Switching it off hides it but keeps everything you've typed for next time."
+            fields:
+              - { label: "Show Callout", name: enabled, widget: boolean, default: false, hint: "Turn on while a fundraiser is coming up, and off when it's over." }
+              - { label: "Label Above Headline", name: eyebrow, widget: string, default: "Fundraiser", hint: "Small label above the headline, e.g. Fundraiser or Save the Date" }
+              - { label: "Headline", name: headline, widget: string, hint: "e.g. Dining with Democrats 2026" }
+              - { label: "Description", name: description, widget: text, hint: "A sentence or two about the event and what it supports." }
+              - { label: "Photo", name: photo, widget: image, required: false }
+              - { label: "Photo Description", name: photo_alt, widget: string, required: false, hint: "A few words describing the photo, for screen readers." }
+              - { label: "Button Label", name: button_label, widget: string, hint: "e.g. Get Tickets → or Sponsor This Event →" }
+              - { label: "Button Link", name: button_url, widget: string, hint: "Ticket link, ActBlue page, or sponsor.html" }

@@ -1,24 +1,64 @@
 // NEBCD — build.js
 // Reads _data/*.json, renders *.template.html files, writes output HTML.
 // Run: node build.js
-// GitHub Actions runs this on every push to main.
+// GitHub Actions runs this on every push to main and once a night (see .github/workflows/build.yml).
 
 const fs    = require('fs');
 const https = require('https');
 
 // ── Load data ──────────────────────────────────────────────────────────────
-const settings    = JSON.parse(fs.readFileSync('_data/settings.json', 'utf8'));
-const events      = JSON.parse(fs.readFileSync('_data/events.json', 'utf8')).events;
-const endorsements = JSON.parse(fs.readFileSync('_data/endorsements.json', 'utf8')).endorsements;
-const storeData   = JSON.parse(fs.readFileSync('_data/store.json', 'utf8'));
-const sponsorData = JSON.parse(fs.readFileSync('_data/sponsor.json', 'utf8'));
+
+function readData(file, fallback = {}) {
+  const path = `_data/${file}`;
+  return fs.existsSync(path) ? JSON.parse(fs.readFileSync(path, 'utf8')) : fallback;
+}
+
+// Site settings are split into one file per admin screen:
+//   homepage.json   → 🏠 Homepage
+//   office.json     → 📍 Office & Contact
+//   links.json      → 🔗 Links & Accounts
+//   elections.json  → 🗳️ Elections → Election Page Text & Voting Resources
+//   site-mode.json  → ⚙️ Site Mode
+// _data/settings.json is the old all-in-one file. If it still exists it's read
+// first, and anything in the new files takes priority, so the site keeps
+// working during the switchover. It can be deleted once the new files are in.
+const SETTINGS_FILES = ['homepage.json', 'office.json', 'links.json', 'elections.json', 'site-mode.json'];
+const foundSettingsFiles = ['settings.json', ...SETTINGS_FILES].filter(f => fs.existsSync(`_data/${f}`));
+if (!foundSettingsFiles.length) {
+  // Fail the build (the live site stays as it was) rather than publish a broken site.
+  throw new Error('No settings files found in _data/. Expected homepage.json, office.json, links.json, elections.json and site-mode.json.');
+}
+const settings = Object.assign({}, readData('settings.json'), ...SETTINGS_FILES.map(f => readData(f)));
+
+const events       = readData('events.json', { events: [] }).events || [];
+const endorsements = readData('endorsements.json', { endorsements: [] }).endorsements || [];
+const storeData    = readData('store.json', { store_intro: '', products: [] });
+const sponsorData  = readData('sponsor.json', { sponsor_intro: '', events: [] });
+
+// ── Dates (always Central time, since GitHub's servers run on UTC) ─────────
+const TIME_ZONE = 'America/Chicago';
+// Today's date in Central time as YYYY-MM-DD, e.g. "2026-10-05"
+const todayCentral = new Intl.DateTimeFormat('en-CA', {
+  timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+}).format(new Date());
+const currentYear = todayCentral.slice(0, 4);
+
+// ── Defaults for settings that may be blank ────────────────────────────────
+const DEFAULT_MOBILIZE_URL     = 'https://www.mobilize.us/nebcd/';
+const DEFAULT_GET_INVOLVED_URL = 'https://join.nebcd.org/m/volunteer';
+
+const mobilizeUrl   = settings.mobilize_url || DEFAULT_MOBILIZE_URL;
+const getInvolvedUrl = settings.get_involved_url || DEFAULT_GET_INVOLVED_URL;
+// Phone link digits are worked out from the phone number, e.g. "210-917-1790" → "2109171790"
+const officePhoneHref = String(settings.office_phone || '').replace(/\D/g, '') || settings.office_phone_href || '';
 
 // ── Endorsements page mode ─────────────────────────────────────────────────
-// Set in the CMS: Site Settings → Endorsements Page Mode.
+// Set in the CMS: ⚙️ Site Mode → Endorsements Page Mode.
 // "endorsements" (default) = endorsed-candidates page.
 // "election" = election guide covering all candidates after the primary.
 // The URL stays /endorsements in both modes so existing links keep working.
-const cycle = settings.endorsements_cycle_label || '';
+// Election year: uses the CMS value, or the current year if left blank.
+const cycle = settings.endorsements_cycle_label || currentYear;
 const isElectionMode = settings.endorsements_page_mode === 'election';
 
 const pageText = isElectionMode ? {
@@ -63,7 +103,7 @@ function esc(str) {
 
 // Parse a date string like "2026-05-10" into a Date object (local noon to avoid timezone drift)
 function parseDate(dateStr) {
-  const [y, m, d] = dateStr.split('-').map(Number);
+  const [y, m, d] = String(dateStr).slice(0, 10).split('-').map(Number);
   return new Date(y, m - 1, d, 12, 0, 0);
 }
 
@@ -92,28 +132,34 @@ const tagClass = {
 
 // ── Event helpers ──────────────────────────────────────────────────────────
 
-// Sort events by date ascending
-function sortedEvents() {
-  return [...events].sort((a, b) => parseDate(a.date) - parseDate(b.date));
+// Upcoming events only (today or later, Central time), sorted by date.
+// Past events stay in the CMS but are left off the site automatically.
+function upcomingEvents() {
+  return events
+    .filter(e => e.date && String(e.date).slice(0, 10) >= todayCentral)
+    .sort((a, b) => parseDate(a.date) - parseDate(b.date));
 }
 
 // Build the homepage event preview cards
 // CMS featured events take priority; Mobilize fills remaining slots up to 3
 function buildEventPreviewCards(mobilizeEvents) {
-  const featured = sortedEvents().filter(e => e.featured).slice(0, 3);
+  const featured = upcomingEvents().filter(e => e.featured).slice(0, 3);
   const slotsLeft = 3 - featured.length;
 
   // CMS cards
-  const cmsCards = featured.map(e => `
+  const cmsCards = featured.map(e => {
+    const url = e.button_url || '#';
+    return `
           <div class="event-card">
             <div class="event-date"><span class="event-month">${esc(formatMonthShort(e.date))}</span><span class="event-day">${formatDay(e.date)}</span></div>
             <div class="event-info">
               <h3>${esc(e.title)}</h3>
               <p class="event-meta">${esc(e.time)} · ${esc(e.location)}</p>
               <p>${esc(e.description)}</p>
-              <a href="${e.button_url === '#' ? 'events.html' : esc(e.button_url)}" class="btn-link"${e.button_url !== '#' && e.button_url.startsWith('http') ? ' target="_blank"' : ''}>RSVP / Learn More →</a>
+              <a href="${url === '#' ? 'events.html' : esc(url)}" class="btn-link"${url !== '#' && url.startsWith('http') ? ' target="_blank"' : ''}>RSVP / Learn More →</a>
             </div>
-          </div>`);
+          </div>`;
+  });
 
   // Mobilize fill cards (only if slots remain)
   const mobilizeCards = slotsLeft > 0 && mobilizeEvents && mobilizeEvents.length
@@ -122,13 +168,13 @@ function buildEventPreviewCards(mobilizeEvents) {
         const slot      = evt.timeslots && (evt.timeslots.find(s => s.start_date >= now) || evt.timeslots[0]);
         const dateObj   = slot ? new Date(slot.start_date * 1000) : null;
         const monthShort = dateObj
-          ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: 'America/Chicago' }).toUpperCase()
+          ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: TIME_ZONE }).toUpperCase()
           : '—';
         const dayNum    = dateObj
-          ? dateObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/Chicago' })
+          ? dateObj.toLocaleString('en-US', { day: 'numeric', timeZone: TIME_ZONE })
           : '—';
         const timeStr   = dateObj
-          ? dateObj.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+          ? dateObj.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: TIME_ZONE })
           : '';
         const location  = evt.location
           ? (evt.location.venue || evt.location.locality || 'See Mobilize for details')
@@ -151,14 +197,24 @@ function buildEventPreviewCards(mobilizeEvents) {
       })
     : [];
 
-  return [...cmsCards, ...mobilizeCards].join('\n');
+  const cards = [...cmsCards, ...mobilizeCards];
+  if (!cards.length) {
+    return `
+          <p class="mobilize-intro" style="grid-column:1/-1">No upcoming events are posted right now. Check the full calendar for what's coming up.</p>`;
+  }
+  return cards.join('\n');
 }
 
 // Build the full event list rows grouped by month (events.html)
 function buildEventListRows() {
-  const sorted = sortedEvents();
+  const upcoming = upcomingEvents();
+  if (!upcoming.length) {
+    return `
+          <p class="mobilize-intro">No upcoming events are posted right now. Check the calendar above, or sign up for a volunteer shift on Mobilize.</p>`;
+  }
+
   const groups = {};
-  sorted.forEach(e => {
+  upcoming.forEach(e => {
     const key = formatMonthYear(e.date);
     if (!groups[key]) groups[key] = [];
     groups[key].push(e);
@@ -167,6 +223,7 @@ function buildEventListRows() {
   return Object.entries(groups).map(([month, evts]) => {
     const rows = evts.map(e => {
       const isElection = e.type === 'Election';
+      const url = e.button_url || '#';
       return `
             <div class="event-row${isElection ? ' event-row--election' : ''}">
               <div class="event-row-date${isElection ? ' event-row-date--red' : ''}"><span class="event-month">${esc(formatMonthShort(e.date))}</span><span class="event-day">${formatDay(e.date)}</span></div>
@@ -178,7 +235,7 @@ function buildEventListRows() {
                 <p class="event-meta">${esc(e.time)} · ${esc(e.location)}</p>
                 <p>${esc(e.description)}</p>
                 <div class="event-row-actions">
-                  <a href="${esc(e.button_url)}"${e.button_url.startsWith('http') ? ' target="_blank"' : ''} class="btn btn-${isElection ? 'red' : 'blue'} btn-sm">${esc(e.button_label)}</a>
+                  <a href="${esc(url)}"${url.startsWith('http') ? ' target="_blank"' : ''} class="btn btn-${isElection ? 'red' : 'blue'} btn-sm">${esc(e.button_label)}</a>
                 </div>
               </div>
             </div>`;
@@ -194,8 +251,8 @@ function buildEventListRows() {
 
 // Build events Schema.org JSON-LD for events.html
 function buildEventsSchema() {
-  const items = sortedEvents().map((e, i) => {
-    const isOnline = e.location.toLowerCase().includes('zoom');
+  const items = upcomingEvents().map((e, i) => {
+    const isOnline = String(e.location || '').toLowerCase().includes('zoom');
     return {
       '@type': 'Event',
       position: i + 1,
@@ -240,9 +297,9 @@ function buildEventsSchema() {
 
 // ── Voting resources ───────────────────────────────────────────────────────
 function buildVotingResourceCards() {
-  return settings.voting_resources.map(r => `
+  return (settings.voting_resources || []).map(r => `
           <a href="${esc(r.url)}" target="_blank" class="resource-card">
-            <div class="resource-icon">${r.icon}</div>
+            <div class="resource-icon">${r.icon || ''}</div>
             <h4>${esc(r.title)}</h4>
             <p>${esc(r.description)}</p>
             <span class="btn-link">${esc(r.link_label)}</span>
@@ -251,7 +308,7 @@ function buildVotingResourceCards() {
 
 // ── Gallery ────────────────────────────────────────────────────────────────
 function buildGalleryPhotos() {
-  return settings.gallery_photos.map(p => {
+  return (settings.gallery_photos || []).map(p => {
     const sizeClass = p.size === 'tall' ? ' gallery-item--tall' : p.size === 'wide' ? ' gallery-item--wide' : '';
     return `
           <div class="gallery-item${sizeClass}">
@@ -406,22 +463,46 @@ function buildEndorsementsSchema() {
 }
 
 // ── Template renderer ──────────────────────────────────────────────────────
-// NAV_ELECTION_LABEL is filled on every page automatically, so any template
-// can use {{NAV_ELECTION_LABEL}} for the endorsements nav link.
-function render(template, replacements) {
+
+// Values available on every page: nav, footer, links and office contact info.
+const SHARED = {
+  NAV_ELECTION_LABEL:    esc(pageText.navLabel),
+  CURRENT_YEAR:          currentYear,
+  ACTBLUE_DUES_URL:      esc(settings.actblue_dues_url),
+  ACTBLUE_DONATE_URL:    esc(settings.actblue_donate_url),
+  FACEBOOK_URL:          esc(settings.facebook_url),
+  INSTAGRAM_URL:         esc(settings.instagram_url),
+  GET_INVOLVED_URL:      esc(getInvolvedUrl),
+  MOBILIZE_URL:          esc(mobilizeUrl),
+  VOLUNTEER_FORM_ID:     esc(settings.volunteer_form_id),
+  OFFICE_ADDRESS_STREET: esc(settings.office_address_street),
+  OFFICE_ADDRESS_CITY:   esc(settings.office_address_city),
+  OFFICE_PHONE:          esc(settings.office_phone),
+  OFFICE_PHONE_HREF:     esc(officePhoneHref),
+  OFFICE_EMAIL:          esc(settings.office_email),
+  OFFICE_HOURS_LINE1:    esc(settings.office_hours_line1),
+  OFFICE_HOURS_LINE2:    esc(settings.office_hours_line2),
+  OFFICE_HOURS_LINE3:    esc(settings.office_hours_line3),
+  // Store page shows weekday hours on one line
+  OFFICE_HOURS_SHORT:    [settings.office_hours_line1, settings.office_hours_line2].filter(Boolean).map(esc).join(' · '),
+  OFFICE_DIRECTIONS_URL: esc(settings.office_directions_url),
+};
+
+function render(template, replacements = {}) {
   let out = template;
-  const all = { NAV_ELECTION_LABEL: esc(pageText.navLabel), ...replacements };
-  for (const [key, val] of Object.entries(all)) {
-    out = out.split(`{{${key}}}`).join(val);
+  for (const [key, val] of Object.entries({ ...SHARED, ...replacements })) {
+    out = out.split(`{{${key}}}`).join(val == null ? '' : val);
   }
+  const leftover = out.match(/{{[A-Z0-9_]+}}/g);
+  if (leftover) console.warn(`  ⚠ Unfilled placeholders: ${[...new Set(leftover)].join(', ')}`);
   return out;
 }
 
 // ── Nav label sync ─────────────────────────────────────────────────────────
-// Rewrites the text of plain nav/footer links to endorsements.html so every
-// page matches the current mode, including hand-edited templates and the
-// static pages (volunteer, privacy, terms) that the build doesn't render.
-// Links with a class (like the homepage "View All…" button) are left alone.
+// Safety net: rewrites the text of plain nav/footer links to endorsements.html
+// so every page matches the current mode, even if a template was hand-edited
+// with the word typed in. Links with a class (like the homepage "View All…"
+// button) are left alone.
 const NAV_LINK_PATTERN = /(<a href="endorsements\.html"(?![^>]*\bclass=)[^>]*>)[^<]*(<\/a>)/g;
 
 function syncNavLabel(html) {
@@ -449,16 +530,6 @@ function fetchMobilizeEvents() {
       console.warn(`  ⚠ Mobilize API fetch failed (${err.message}) — skipping section.`);
       resolve([]);
     });
-  });
-}
-
-// Format a Unix timestamp as "Sat, Jun 14 · 10:00 AM"
-function formatMobilizeDate(ts) {
-  if (!ts) return '';
-  const d = new Date(ts * 1000);
-  return d.toLocaleString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric',
-    hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago',
   });
 }
 
@@ -504,7 +575,7 @@ function buildMobilizeSection(mobilizeEvents) {
     <section class="mobilize-section">
       <div class="container">
         <h2 class="subsection-title">Volunteer Shifts on Mobilize</h2>
-        <p class="mobilize-intro">No upcoming shifts posted yet — check back soon or <a href="https://www.mobilize.us/nebcd/" target="_blank">visit our Mobilize page</a> directly.</p>
+        <p class="mobilize-intro">No upcoming shifts posted yet — check back soon or <a href="${esc(mobilizeUrl)}" target="_blank">visit our Mobilize page</a> directly.</p>
       </div>
     </section>`;
   }
@@ -515,13 +586,13 @@ function buildMobilizeSection(mobilizeEvents) {
     const startTs    = slot ? slot.start_date : null;
     const dateObj    = startTs ? new Date(startTs * 1000) : null;
     const monthShort = dateObj
-      ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: 'America/Chicago' }).toUpperCase()
+      ? dateObj.toLocaleString('en-US', { month: 'short', timeZone: TIME_ZONE }).toUpperCase()
       : '—';
     const dayNum     = dateObj
-      ? dateObj.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/Chicago' })
+      ? dateObj.toLocaleString('en-US', { day: 'numeric', timeZone: TIME_ZONE })
       : '—';
     const timeStr    = dateObj
-      ? dateObj.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' })
+      ? dateObj.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: TIME_ZONE })
       : '';
     const extraSlots = evt.timeslots && evt.timeslots.length > 1
       ? ` +${evt.timeslots.length - 1} more time${evt.timeslots.length > 2 ? 's' : ''}`
@@ -559,7 +630,7 @@ function buildMobilizeSection(mobilizeEvents) {
           </div>
         </div>
         <div class="section-footer-link" style="margin-top:1.5rem">
-          <a href="https://www.mobilize.us/nebcd/" target="_blank" class="btn btn-outline">View All Shifts on Mobilize ↗</a>
+          <a href="${esc(mobilizeUrl)}" target="_blank" class="btn btn-outline">View All Shifts on Mobilize ↗</a>
         </div>
       </div>
     </section>`;
@@ -568,7 +639,7 @@ function buildMobilizeSection(mobilizeEvents) {
 // ── Fundraiser helpers ─────────────────────────────────────────────────────
 
 // Admin-toggled fundraiser callout, shared by the homepage and Events page.
-// Returns '' (nothing rendered) when settings.fundraiser.enabled is false/missing.
+// Returns '' (nothing rendered) when the switch in ⚙️ Site Mode is off.
 function buildFundraiserSection() {
   const f = settings.fundraiser;
   if (!f || !f.enabled) return '';
@@ -578,7 +649,7 @@ function buildFundraiserSection() {
     : '';
 
   return `
-    <!-- FUNDRAISER CALLOUT (admin-toggled via CMS: Site Settings → Fundraiser Callout) -->
+    <!-- FUNDRAISER CALLOUT (admin-toggled via CMS: ⚙️ Site Mode → Fundraiser Callout) -->
     <section class="fundraiser-callout" id="fundraiser">
       <div class="container">
         <div class="fundraiser-card">
@@ -597,7 +668,7 @@ function buildFundraiserSection() {
 // ── Store helpers ──────────────────────────────────────────────────────────
 
 function buildStoreProductGrid() {
-  return storeData.products
+  return (storeData.products || [])
     .filter(p => p.available !== false)
     .map(p => `
           <div class="store-item-card">
@@ -616,7 +687,7 @@ function buildStoreProductGrid() {
 // ── Sponsor helpers ────────────────────────────────────────────────────────
 
 function buildSponsorEvents() {
-  return sponsorData.events.map((evt, i) => {
+  return (sponsorData.events || []).map((evt, i) => {
     const isAlt = i % 2 !== 0;
     const detailsHtml = [
       evt.date     ? `<div class="sponsor-detail-item"><span class="detail-label">📅 When</span><span class="detail-value">${esc(evt.date)}</span></div>` : '',
@@ -624,11 +695,11 @@ function buildSponsorEvents() {
       evt.attendance ? `<div class="sponsor-detail-item"><span class="detail-label">👥 Attendance</span><span class="detail-value">${esc(evt.attendance)}</span></div>` : '',
     ].filter(Boolean).join('\n');
 
-    const tiersHtml = evt.tiers.map(tier => `
+    const tiersHtml = (evt.tiers || []).map(tier => `
               <div class="sponsor-tier">
                 <div class="tier-label">${esc(tier.name)}</div>
                 <ul class="tier-perks">
-                  ${tier.perks.map(p => `<li>${esc(p)}</li>`).join('\n                  ')}
+                  ${(tier.perks || []).map(p => `<li>${esc(p)}</li>`).join('\n                  ')}
                 </ul>
               </div>`).join('\n');
 
@@ -662,130 +733,99 @@ function buildSponsorEvents() {
 // ── Main (async to support Mobilize API fetch) ─────────────────────────────
 async function main() {
 
+console.log(`Today (Central): ${todayCentral}`);
+console.log(`Settings read from: ${foundSettingsFiles.join(', ')}`);
 console.log(`Endorsements page mode: ${isElectionMode ? 'Election Guide' : 'Endorsements'}`);
 
-// ── Build endorsements.html ────────────────────────────────────────────────
-console.log('Building endorsements.html...');
-const endorsementsTemplate = fs.readFileSync('endorsements.template.html', 'utf8');
-const endorsementsHtml = render(endorsementsTemplate, {
-  ENDORSEMENTS_CYCLE_LABEL: esc(settings.endorsements_cycle_label),
-  ENDORSEMENTS_INTRO:       esc(settings.endorsements_intro),
-  PAGE_TITLE:               esc(pageText.title),
-  PAGE_DESCRIPTION:         esc(pageText.description),
-  PAGE_KEYWORDS:            esc(pageText.keywords),
-  SOCIAL_TITLE:             esc(pageText.socialTitle),
-  SOCIAL_DESCRIPTION:       esc(pageText.socialDescription),
-  BREADCRUMB_LABEL:         esc(pageText.breadcrumb),
-  PAGE_HEADING:             esc(pageText.heading),
-  ACTBLUE_DUES_URL:         esc(settings.actblue_dues_url),
-  ACTBLUE_DONATE_URL:       esc(settings.actblue_donate_url),
-  FACEBOOK_URL:             esc(settings.facebook_url),
-  INSTAGRAM_URL:            esc(settings.instagram_url),
-  VOTING_RESOURCE_CARDS:    buildVotingResourceCards(),
-  GENERAL_SECTION:          buildGeneralSection(),
-  PRIMARY_SECTION:          buildPrimarySection(),
-  RUNOFF_SECTION:           buildRunoffSection(),
-  ENDORSEMENTS_SCHEMA:      buildEndorsementsSchema(),
-});
-fs.writeFileSync('endorsements.html', syncNavLabel(endorsementsHtml));
-console.log('  ✓ endorsements.html');
-
-// ── Build store.html ───────────────────────────────────────────────────────
-console.log('Building store.html...');
-const storeTemplate = fs.readFileSync('store.template.html', 'utf8');
-const storeHtml = render(storeTemplate, {
-  STORE_INTRO:         esc(storeData.store_intro),
-  STORE_PRODUCT_GRID:  buildStoreProductGrid(),
-  ACTBLUE_DUES_URL:    esc(settings.actblue_dues_url),
-  ACTBLUE_DONATE_URL:  esc(settings.actblue_donate_url),
-  FACEBOOK_URL:        esc(settings.facebook_url),
-  INSTAGRAM_URL:       esc(settings.instagram_url),
-});
-fs.writeFileSync('store.html', syncNavLabel(storeHtml));
-console.log('  ✓ store.html');
-
-// ── Build sponsor.html ─────────────────────────────────────────────────────
-console.log('Building sponsor.html...');
-const sponsorTemplate = fs.readFileSync('sponsor.template.html', 'utf8');
-const sponsorHtml = render(sponsorTemplate, {
-  SPONSOR_INTRO:       esc(sponsorData.sponsor_intro),
-  SPONSOR_EVENTS:      buildSponsorEvents(),
-  ACTBLUE_DUES_URL:    esc(settings.actblue_dues_url),
-  ACTBLUE_DONATE_URL:  esc(settings.actblue_donate_url),
-  FACEBOOK_URL:        esc(settings.facebook_url),
-  INSTAGRAM_URL:       esc(settings.instagram_url),
-});
-fs.writeFileSync('sponsor.html', syncNavLabel(sponsorHtml));
-console.log('  ✓ sponsor.html');
-
-// ── Fetch Mobilize events (async) ──────────────────────────────────────────
 console.log('Fetching Mobilize events...');
 const mobilizeEvents = await fetchMobilizeEvents();
 console.log(`  ✓ ${mobilizeEvents.length} Mobilize event(s) fetched`);
 
-// ── Build index.html ───────────────────────────────────────────────────────
-console.log('Building index.html...');
-const indexTemplate = fs.readFileSync('index.template.html', 'utf8');
-const indexHtml = render(indexTemplate, {
-  HERO_IMAGE:              settings.hero_image,
-  HERO_IMAGE_ALT:          esc(settings.hero_image_alt),
-  VISIT_PHOTO:             settings.visit_photo,
-  VISIT_PHOTO_ALT:         esc(settings.visit_photo_alt),
-  VISIT_DESCRIPTION:       esc(settings.visit_description),
-  OFFICE_ADDRESS_STREET:   esc(settings.office_address_street),
-  OFFICE_ADDRESS_CITY:     esc(settings.office_address_city),
-  OFFICE_PHONE:            esc(settings.office_phone),
-  OFFICE_PHONE_HREF:       esc(settings.office_phone_href),
-  OFFICE_EMAIL:            esc(settings.office_email),
-  OFFICE_HOURS_LINE1:      esc(settings.office_hours_line1),
-  OFFICE_HOURS_LINE2:      esc(settings.office_hours_line2),
-  OFFICE_HOURS_LINE3:      esc(settings.office_hours_line3),
-  OFFICE_DIRECTIONS_URL:   esc(settings.office_directions_url),
-  ACTBLUE_DUES_URL:        esc(settings.actblue_dues_url),
-  ACTBLUE_DONATE_URL:      esc(settings.actblue_donate_url),
-  FACEBOOK_URL:            esc(settings.facebook_url),
-  INSTAGRAM_URL:           esc(settings.instagram_url),
-  ENDORSEMENTS_INTRO:      esc(settings.endorsements_intro),
-  HOME_ENDORSEMENTS_HEADING: esc(pageText.homeHeading),
-  HOME_ENDORSEMENTS_BUTTON:  esc(pageText.homeButton),
-  EVENT_PREVIEW_CARDS:     buildEventPreviewCards(mobilizeEvents),
-  ENDORSEMENT_PREVIEW_CARDS: buildEndorsementPreviewCards(),
-  GALLERY_PHOTOS:          buildGalleryPhotos(),
-  FUNDRAISER_SECTION:      buildFundraiserSection(),
-});
-fs.writeFileSync('index.html', syncNavLabel(indexHtml));
-console.log('  ✓ index.html');
+// Each page: template file → output file, plus that page's own values.
+// Shared values (nav, footer, links, office info) are filled in automatically.
+const pages = [
+  {
+    file: 'index',
+    values: () => ({
+      HERO_IMAGE:                settings.hero_image,
+      HERO_IMAGE_ALT:            esc(settings.hero_image_alt),
+      VISIT_PHOTO:               settings.visit_photo,
+      VISIT_PHOTO_ALT:           esc(settings.visit_photo_alt),
+      VISIT_DESCRIPTION:         esc(settings.visit_description),
+      ENDORSEMENTS_INTRO:        esc(settings.endorsements_intro),
+      HOME_ENDORSEMENTS_HEADING: esc(pageText.homeHeading),
+      HOME_ENDORSEMENTS_BUTTON:  esc(pageText.homeButton),
+      EVENT_PREVIEW_CARDS:       buildEventPreviewCards(mobilizeEvents),
+      ENDORSEMENT_PREVIEW_CARDS: buildEndorsementPreviewCards(),
+      GALLERY_PHOTOS:            buildGalleryPhotos(),
+      FUNDRAISER_SECTION:        buildFundraiserSection(),
+    }),
+  },
+  {
+    file: 'events',
+    values: () => ({
+      EVENT_LIST_ROWS:    buildEventListRows(),
+      EVENTS_SCHEMA:      buildEventsSchema(),
+      MOBILIZE_SECTION:   buildMobilizeSection(mobilizeEvents),
+      FUNDRAISER_SECTION: buildFundraiserSection(),
+    }),
+  },
+  {
+    file: 'endorsements',
+    values: () => ({
+      ENDORSEMENTS_CYCLE_LABEL: esc(cycle),
+      ENDORSEMENTS_INTRO:       esc(settings.endorsements_intro),
+      PAGE_TITLE:               esc(pageText.title),
+      PAGE_DESCRIPTION:         esc(pageText.description),
+      PAGE_KEYWORDS:            esc(pageText.keywords),
+      SOCIAL_TITLE:             esc(pageText.socialTitle),
+      SOCIAL_DESCRIPTION:       esc(pageText.socialDescription),
+      BREADCRUMB_LABEL:         esc(pageText.breadcrumb),
+      PAGE_HEADING:             esc(pageText.heading),
+      VOTING_RESOURCE_CARDS:    buildVotingResourceCards(),
+      GENERAL_SECTION:          buildGeneralSection(),
+      PRIMARY_SECTION:          buildPrimarySection(),
+      RUNOFF_SECTION:           buildRunoffSection(),
+      ENDORSEMENTS_SCHEMA:      buildEndorsementsSchema(),
+    }),
+  },
+  {
+    file: 'store',
+    values: () => ({
+      STORE_INTRO:        esc(storeData.store_intro),
+      STORE_PRODUCT_GRID: buildStoreProductGrid(),
+    }),
+  },
+  {
+    file: 'sponsor',
+    values: () => ({
+      SPONSOR_INTRO:  esc(sponsorData.sponsor_intro),
+      SPONSOR_EVENTS: buildSponsorEvents(),
+    }),
+  },
+  { file: 'volunteer', values: () => ({}) },
+  { file: 'privacy',   values: () => ({}) },
+  { file: 'terms',     values: () => ({}) },
+];
 
-// ── Build events.html ──────────────────────────────────────────────────────
-console.log('Building events.html...');
-const eventsTemplate = fs.readFileSync('events.template.html', 'utf8');
-const eventsHtml = render(eventsTemplate, {
-  ACTBLUE_DUES_URL:        esc(settings.actblue_dues_url),
-  ACTBLUE_DONATE_URL:      esc(settings.actblue_donate_url),
-  FACEBOOK_URL:            esc(settings.facebook_url),
-  INSTAGRAM_URL:           esc(settings.instagram_url),
-  EVENT_LIST_ROWS:         buildEventListRows(),
-  EVENTS_SCHEMA:           buildEventsSchema(),
-  MOBILIZE_SECTION:        buildMobilizeSection(mobilizeEvents),
-  FUNDRAISER_SECTION:      buildFundraiserSection(),
-});
-fs.writeFileSync('events.html', syncNavLabel(eventsHtml));
-console.log('  ✓ events.html');
+for (const page of pages) {
+  const templatePath = `${page.file}.template.html`;
+  const outputPath   = `${page.file}.html`;
 
-// ── Sync nav label on static pages (not built from templates) ──────────────
-console.log('Syncing nav label on static pages...');
-['volunteer.html', 'privacy.html', 'terms.html']
-  .filter(file => fs.existsSync(file))
-  .forEach(file => {
-    const html = fs.readFileSync(file, 'utf8');
-    const updated = syncNavLabel(html);
-    if (updated !== html) {
-      fs.writeFileSync(file, updated);
-      console.log(`  ✓ ${file} updated`);
-    } else {
-      console.log(`  ✓ ${file} already matches`);
-    }
-  });
+  if (fs.existsSync(templatePath)) {
+    console.log(`Building ${outputPath}...`);
+    const html = render(fs.readFileSync(templatePath, 'utf8'), page.values());
+    fs.writeFileSync(outputPath, syncNavLabel(html));
+    console.log(`  ✓ ${outputPath}`);
+  } else if (fs.existsSync(outputPath)) {
+    // No template yet: keep the existing page, just match the nav label.
+    const html = fs.readFileSync(outputPath, 'utf8');
+    fs.writeFileSync(outputPath, syncNavLabel(html));
+    console.log(`  ✓ ${outputPath} (no template found, nav label synced only)`);
+  } else {
+    console.warn(`  ⚠ Skipped ${page.file}: no ${templatePath} found`);
+  }
+}
 
 console.log('\nBuild complete.');
 

@@ -3,6 +3,11 @@ name: Build & Deploy
 on:
   push:
     branches: [main]
+  # Rebuild every night so past events drop off and Mobilize shifts stay current,
+  # even when nobody edits the site. Runs around 1 AM Central (06:15 UTC).
+  # GitHub may start scheduled runs a few minutes late; that's normal.
+  schedule:
+    - cron: '15 6 * * *'
   workflow_dispatch:
 
 permissions:
