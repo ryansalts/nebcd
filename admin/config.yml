@@ -15,6 +15,7 @@ public_folder: "assets"
 # ─────────────────────────────────────────────────────────────────────────────
 # How the admin is organized (one screen per job):
 #   📅 Events            → _data/events.json
+#   📰 News & Statements → _data/news/ (one file per post)
 #   🗳️ Elections         → _data/endorsements.json + _data/representatives.json + _data/elections.json
 #   🏠 Homepage          → _data/homepage.json
 #   👥 Leadership        → _data/leadership.json
@@ -65,6 +66,61 @@ collections:
                 widget: boolean
                 default: false
                 hint: "Turn on to make sure this event appears in the homepage's Upcoming Events section (up to 3 are shown). Any open spots are filled automatically: with Mobilize shifts during campaign season, or with the next upcoming events in the off-season."
+
+  # ── News & Statements ─────────────────────────────────────────────────────
+  # One file per post in _data/news/. The file name (and the post's web address,
+  # nebcd.org/news/<name>) comes from the title when the post is first saved and
+  # never changes after that, so links people have shared keep working.
+  - name: "news"
+    label: "📰 News & Statements"
+    label_singular: "Post"
+    description: "Statements, news and announcements. The newest post appears at the top of the homepage for 30 days and beside the mission text for 90 days; every post stays on nebcd.org/news. A post only goes on the site once Ready to Publish is switched on, so a second person can review it first."
+    folder: "_data/news"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{slug}}"
+    identifier_field: title
+    summary: "{{fields.date}} — {{fields.title}}"
+    sortable_fields: ["date", "title"]
+    view_filters:
+      - { label: "Not published yet", field: published, pattern: false }
+      - { label: "Published", field: published, pattern: true }
+      - { label: "Statements", field: type, pattern: "Statement" }
+    preview_path: "news/{{slug}}"
+    fields:
+      - { label: "Title", name: title, widget: string, hint: "The headline. The post's web address is made from the title the first time it's saved and stays the same after that, even if the title is edited later." }
+      - { label: "Date", name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "MMMM D, YYYY", time_format: false, default: "{{now}}", hint: "Shown on the post, and used to put posts in order (newest first)." }
+      - label: "Type"
+        name: type
+        widget: select
+        default: "News"
+        hint: "Sets the colored label on the post. On the homepage, a Statement is announced as \"New statement\"."
+        options:
+          - { label: "Statement", value: "Statement" }
+          - { label: "News", value: "News" }
+          - { label: "Announcement", value: "Announcement" }
+      - { label: "Summary", name: summary, widget: text, required: false, hint: "Optional. One or two sentences shown on the homepage, the News page and in link previews on Facebook and in texts. Leave blank to use the opening lines of the post." }
+      - { label: "Photo", name: photo, widget: image, required: false, hint: "Optional. Shown at the top of the post's own page and in its link previews (not on the homepage). Wide photos work best." }
+      - { label: "Photo Description", name: photo_alt, widget: string, required: false, hint: "A few words describing the photo, for screen readers." }
+      - label: "Post"
+        name: body
+        widget: markdown
+        buttons: ["bold", "italic", "link", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"]
+        editor_components: ["image"]
+        hint: "The full text of the post."
+      - label: "Pin to Homepage"
+        name: pinned
+        widget: boolean
+        required: false
+        default: false
+        hint: "Keeps this post beside the mission text on the homepage, even after newer posts go up or it's more than 90 days old. Switch it off when it's no longer needed."
+      - label: "Ready to Publish"
+        name: published
+        widget: boolean
+        required: false
+        default: false
+        hint: "Leave OFF while writing: the post is saved but doesn't appear on the site. A second person reads it over and switches this ON; the post goes live about a minute after saving."
 
   # ── Elections ─────────────────────────────────────────────────────────────
   - name: "elections"

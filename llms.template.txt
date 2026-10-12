@@ -50,6 +50,9 @@ Volunteer Signup (Mobilize): {{MOBILIZE_URL}}
 {{#if ELECTION_PAGE_ON}}
 /endorsements — {{ELECTION_PAGE_SUMMARY}}
 {{/if ELECTION_PAGE_ON}}
+{{#if HAS_NEWS}}
+/news/        — News & Statements. NEBCD's official statements, news and announcements, newest first; each post has its own page under /news/.
+{{/if HAS_NEWS}}
 /volunteer    — Volunteer intake. Ways to help: phonebanks, canvassing, data/admin, events. Google Form intake.
 {{#if IN_SEASON}}
 /store        — In-person merchandise at NEBCD HQ. T-shirts, yard signs, bumper stickers, buttons, flags, earrings. Pickup only at {{OFFICE_ADDRESS_STREET}}, {{OFFICE_ADDRESS_CITY}}.

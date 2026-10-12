@@ -122,18 +122,17 @@
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="nav-links">
-        <li><a href="#mission">About</a></li>
-        <li><a href="events.html">Events</a></li>
-        {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
-        <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-        {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
-        {{#if IN_SEASON}}<li><a href="#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
-        <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
+        {{NAV_LINKS}}
       </ul>
     </nav>
   </header>
 
   <main>
+
+    <!-- The sections after the hero are put in order by build.js (HOME_SECTION_ORDER):
+         the Election section comes first during election season, the Mission first
+         between elections. Keep each section between its "section:" and "/section"
+         markers so the build can move it. -->
 
     <!-- HERO -->
     <section class="hero" id="hero">
@@ -143,10 +142,12 @@
       </div>
       <div class="hero-content container">
         <img src="assets/NEBCD-logo-white.webp" alt="NEBCD" class="hero-logo" />
+        <!-- Newest post from 📰 News & Statements, while it's under 30 days old (filled in by build.js) -->
+        {{HERO_NEWS_LINE}}
         <h1 class="hero-headline">Democracy Lives<br />in the Neighborhood</h1>
         <p class="hero-sub">The North East Bexar County Democrats raise funds, organize volunteers, and maximize voter turnout — right here in our community.</p>
         <div class="hero-actions">
-          {{#if IN_SEASON}}<a href="#visit" class="btn btn-primary">Visit Our Office</a>{{/if IN_SEASON}}{{#unless IN_SEASON}}<a href="events.html" class="btn btn-primary">See Upcoming Events</a>{{/unless IN_SEASON}}
+          {{HERO_PRIMARY_BUTTON}}
           <a href="#get-involved" class="btn btn-ghost">Get Involved</a>
         </div>
       </div>
@@ -156,8 +157,32 @@
       </div>
     </section>
 
+    <!-- [section:fundraiser] -->
     {{FUNDRAISER_SECTION}}
+    <!-- [/section] -->
 
+    <!-- [section:mission] -->
+    <!-- MISSION + LATEST NEWS. The right-hand column shows the latest post from
+         📰 News & Statements while it's under 90 days old (or pinned), and the two
+         mission photos otherwise (filled in by build.js). -->
+    <section class="mission home-band" id="mission">
+      <div class="container">
+        <div class="mission-grid">
+          <div class="mission-text">
+            <span class="eyebrow">Our Mission</span>
+            <h2>Building Democratic Power in Northeast San Antonio</h2>
+            <p>We focus on fundraising for impactful initiatives and organizing activists across Bexar County. From monthly membership meetings to election-season canvassing, everything we do is aimed at boosting engagement and maximizing voter impact.</p>
+            <p class="mission-meeting"><strong>Monthly Meetings</strong> — {{MEETING_TEXT}}</p>
+            <a href="#get-involved" class="btn btn-blue">Join the Movement</a>
+            {{MISSION_NEWS_LINK}}
+          </div>
+          {{MISSION_SIDE}}
+        </div>
+      </div>
+    </section>
+    <!-- [/section] -->
+
+    <!-- [section:events] -->
     <!-- EVENTS PREVIEW -->
     <section class="events-preview home-band" id="events-preview">
       <div class="container">
@@ -174,30 +199,11 @@
         </div>
       </div>
     </section>
+    <!-- [/section] -->
 
-    <!-- MISSION -->
-    <section class="mission home-band" id="mission">
-      <div class="container">
-        <div class="mission-grid">
-          <div class="mission-text">
-            <span class="eyebrow">Our Mission</span>
-            <h2>Building Democratic Power in Northeast San Antonio</h2>
-            <p>We focus on fundraising for impactful initiatives and organizing activists across Bexar County. From monthly membership meetings to election-season canvassing, everything we do is aimed at boosting engagement and maximizing voter impact.</p>
-            <p class="mission-meeting"><strong>Monthly Meetings</strong> — {{MEETING_TEXT}}</p>
-            <a href="#get-involved" class="btn btn-blue">Join the Movement</a>
-          </div>
-          <div class="mission-photos">
-            <div class="photo-stack">
-              <img src="{{MISSION_PHOTO_1}}" alt="{{MISSION_PHOTO_1_ALT}}" class="photo-main" loading="lazy" />
-              <img src="{{MISSION_PHOTO_2}}" alt="{{MISSION_PHOTO_2_ALT}}" class="photo-accent" loading="lazy" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <!-- [section:leadership-list] -->
     {{#if LEADERSHIP_LIST_ON}}
-    <!-- CLUB LEADERSHIP, campaign season (👥 Leadership in the admin; the nav's "About" link lands just above it) -->
+    <!-- CLUB LEADERSHIP, campaign season (👥 Leadership in the admin) -->
     <section class="leadership-section home-band" id="leadership">
       <div class="container">
         <div class="section-header">
@@ -211,12 +217,14 @@
       </div>
     </section>
     {{/if LEADERSHIP_LIST_ON}}
+    <!-- [/section] -->
+    <!-- [section:election] -->
     {{#if ELECTION_PAGE_ON}}
     <!-- ELECTION PREVIEW (wording and cards switch with ⚙️ Site Mode → Election Page Mode) -->
     <section class="endorsements-preview home-band" id="endorsements-preview">
       <div class="container">
         <div class="section-header">
-          <span class="eyebrow">Mission in Action</span>
+          <span class="eyebrow">{{HOME_ELECTION_EYEBROW}}</span>
           <h2>{{HOME_ENDORSEMENTS_HEADING}}</h2>
           <p>{{ENDORSEMENTS_INTRO}}</p>
         </div>
@@ -229,7 +237,9 @@
       </div>
     </section>
     {{/if ELECTION_PAGE_ON}}
+    <!-- [/section] -->
 
+    <!-- [section:get-involved] -->
     <!-- GET INVOLVED -->
     <section class="get-involved-section home-band" id="get-involved">
       <div class="container">
@@ -260,7 +270,9 @@
         </div>
       </div>
     </section>
+    <!-- [/section] -->
 
+    <!-- [section:gallery] -->
     <!-- PHOTO GALLERY -->
     <section class="photo-gallery home-band">
       <div class="container">
@@ -274,7 +286,9 @@
         </div>
       </div>
     </section>
+    <!-- [/section] -->
 
+    <!-- [section:visit] -->
     {{#if IN_SEASON}}
     <!-- VISIT US (hidden in Off-Season Mode) -->
     <section class="visit-section" id="visit">
@@ -309,6 +323,8 @@
       </div>
     </section>
     {{/if IN_SEASON}}
+    <!-- [/section] -->
+    <!-- [section:leadership-feature] -->
     {{#if LEADERSHIP_FEATURE_ON}}
     <!-- CLUB LEADERSHIP, off-season: takes the Visit Us spot and layout (👥 Leadership in the admin) -->
     <section class="visit-section" id="leadership">
@@ -326,6 +342,7 @@
       </div>
     </section>
     {{/if LEADERSHIP_FEATURE_ON}}
+    <!-- [/section] -->
 
   </main>
 
@@ -338,12 +355,7 @@
       <div class="footer-links">
         <h4>Navigate</h4>
         <ul>
-          <li><a href="#mission">About</a></li>
-          <li><a href="events.html">Events</a></li>
-          {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
-          <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-          {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
-          {{#if IN_SEASON}}<li><a href="#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
+          {{FOOTER_LINKS}}
         </ul>
       </div>
       <div class="footer-social">
@@ -375,5 +387,21 @@
   </footer>
 
   <script src="main.js"></script>
+  <script>
+    // News & Statements backup timer. The nightly build normally retires the
+    // homepage's news line and latest-post card when they get old; this does the
+    // same in the visitor's browser, in case a nightly build doesn't run.
+    (function () {
+      try {
+        var today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+        document.querySelectorAll('[data-show-until]').forEach(function (el) {
+          if (today <= el.getAttribute('data-show-until')) return;
+          el.hidden = true;
+          var swap = el.getAttribute('data-swap-with');
+          if (swap && document.getElementById(swap)) document.getElementById(swap).hidden = false;
+        });
+      } catch (e) { /* older browsers: keep the page as built */ }
+    })();
+  </script>
 </body>
 </html>

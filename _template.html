@@ -12,6 +12,8 @@
     3. The build fills in every {{PLACEHOLDER}} (nav, footer, links, office info,
        copyright year) from the CMS automatically, and writes your-page.html.
     Don't type links, phone numbers or the year directly. Use the placeholders.
+    The menu and footer links come from SITE_MENU in build.js; to add the new page
+    to the menu, add it there, not here.
   -->
 
   <!-- ── Favicon ── -->
@@ -103,7 +105,7 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
-  <!-- ── SHARED NAV — do not modify ── -->
+  <!-- ── SHARED NAV — do not modify (links come from SITE_MENU in build.js) ── -->
   <header class="site-header" id="site-header">
     <nav class="nav-inner">
       <a href="index.html" class="nav-logo">
@@ -113,13 +115,7 @@
         <span></span><span></span><span></span>
       </button>
       <ul class="nav-links" id="nav-links">
-        <li><a href="index.html#mission">About</a></li>
-        <li><a href="events.html">Events</a></li>
-        {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
-        <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-        {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
-        {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
-        <li><a href="{{ACTBLUE_DUES_URL}}" target="_blank" class="nav-cta">Join / Donate</a></li>
+        {{NAV_LINKS}}
       </ul>
     </nav>
   </header>
@@ -152,12 +148,7 @@
       <div class="footer-links">
         <h4>Navigate</h4>
         <ul>
-          <li><a href="index.html#mission">About</a></li>
-          <li><a href="events.html">Events</a></li>
-          {{#if ELECTION_PAGE_ON}}<li><a href="endorsements.html">{{NAV_ELECTION_LABEL}}</a></li>{{/if ELECTION_PAGE_ON}}
-          <li><a href="{{GET_INVOLVED_URL}}" target="_blank" rel="noopener noreferrer">Get Involved</a></li>
-          {{#if IN_SEASON}}<li><a href="store.html">Store</a></li>{{/if IN_SEASON}}
-          {{#if IN_SEASON}}<li><a href="index.html#visit">Visit Us</a></li>{{/if IN_SEASON}}{{#unless IN_SEASON}}{{#if SHOW_LEADERSHIP}}<li><a href="index.html#leadership">Leadership</a></li>{{/if SHOW_LEADERSHIP}}{{/unless IN_SEASON}}
+          {{FOOTER_LINKS}}
         </ul>
       </div>
       <div class="footer-social">

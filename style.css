@@ -1081,3 +1081,212 @@ ul  { list-style: none; }
   color: var(--blue);
   font-weight: 600;
 }
+
+
+/* ════════════════════════════════════════
+   NEWS & STATEMENTS
+   The homepage news line and latest-post card,
+   the News page (news/index.html) and each
+   post's page (news/<post>.html).
+════════════════════════════════════════ */
+
+/* Anything the build or the browser marks hidden stays hidden */
+.hero-latest[hidden],
+.latest-card[hidden],
+.mission-photos[hidden] { display: none !important; }
+
+/* ── Post type badges (Statement / News / Announcement) ── */
+.post-type {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 5px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.post-type--statement    { background: #FFEBEE; color: var(--red); }
+.post-type--news         { background: #E3F2FD; color: var(--blue); }
+.post-type--announcement { background: #E8F5E9; color: var(--green); }
+
+.news-item-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.news-item-meta time { font-size: 13px; font-weight: 600; color: var(--mid-gray); }
+
+/* ════════════════════════════════════════
+   HOMEPAGE
+════════════════════════════════════════ */
+
+/* Hero news line: "NEW STATEMENT  Oct 12  Title  →" */
+.hero-latest {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(640px, 100%);
+  margin-bottom: 24px;
+  padding: 6px 18px 6px 6px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.28);
+  backdrop-filter: blur(6px);
+  color: white;
+  font-size: 14px;
+  line-height: 1.35;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.hero-latest:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); }
+.hero-latest-label {
+  flex-shrink: 0;
+  background: var(--red);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: 99px;
+}
+.hero-latest-date { flex-shrink: 0; font-weight: 600; color: rgba(255,255,255,0.7); }
+.hero-latest-title { min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-latest-arrow { flex-shrink: 0; transition: transform 0.15s ease; }
+.hero-latest:hover .hero-latest-arrow { transform: translateX(3px); }
+
+/* Latest-post card in the mission section's right-hand column */
+.latest-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-top: 4px solid var(--blue);
+  padding: 40px 40px 36px;
+}
+.latest-card .eyebrow { margin-bottom: 16px; }
+.latest-card-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--dark);
+  margin: 14px 0 14px;
+}
+.latest-card-title a { transition: color 0.15s; }
+.latest-card-title a:hover { color: var(--blue); }
+.latest-card-summary { font-size: 16px; color: var(--mid-gray); margin-bottom: 26px; }
+.latest-card-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 24px; }
+
+/* Small link under the mission text when the card isn't showing */
+.mission-news-link { margin: 20px 0 0 !important; }
+
+/* ════════════════════════════════════════
+   NEWS PAGE (news/index.html)
+════════════════════════════════════════ */
+.news-list-section { padding: 56px 0 96px; }
+.news-list { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+.news-item { padding: 34px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.news-item:last-child { border-bottom: none; }
+.news-item-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--dark);
+  margin: 12px 0 10px;
+}
+.news-item-title a { transition: color 0.15s; }
+.news-item-title a:hover { color: var(--blue); }
+.news-item > p { font-size: 16px; color: var(--mid-gray); margin-bottom: 14px; }
+
+/* ════════════════════════════════════════
+   POST PAGE (news/<post>.html)
+════════════════════════════════════════ */
+.post-hero h1 { max-width: 860px; }
+.post-hero-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.post-hero-meta time { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+.post-article { max-width: 780px; margin: 0 auto; padding: 64px 24px 56px; }
+.post-photo { margin: 0 0 44px; }
+.post-photo img { width: 100%; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+
+.post-body { font-size: 18px; line-height: 1.75; color: var(--text); }
+.post-body > * + * { margin-top: 1.15em; }
+.post-body h2, .post-body h3, .post-body h4, .post-body h5, .post-body h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.3;
+  margin-top: 1.9em;
+}
+.post-body h2 { font-size: 1.6rem; }
+.post-body h3 { font-size: 1.3rem; }
+.post-body h4, .post-body h5, .post-body h6 { font-size: 1.1rem; }
+.post-body h2 + *, .post-body h3 + *, .post-body h4 + * { margin-top: 0.6em; }
+.post-body a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
+.post-body a:hover { color: var(--blue-dark); }
+.post-body strong { font-weight: 700; color: var(--dark); }
+.post-body ul, .post-body ol { padding-left: 1.5em; }
+.post-body ul { list-style: disc; }
+.post-body ol { list-style: decimal; }
+.post-body ul ul { list-style: circle; }
+.post-body li + li { margin-top: 0.4em; }
+.post-body li > ul, .post-body li > ol { margin-top: 0.4em; }
+.post-body li > p + p { margin-top: 0.8em; }
+.post-body blockquote {
+  border-left: 4px solid var(--blue);
+  padding: 4px 0 4px 24px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: var(--dark);
+}
+.post-body blockquote > * + * { margin-top: 0.8em; }
+.post-body img { width: 100%; border-radius: var(--radius-lg); }
+.post-body hr { border: none; border-top: 1px solid rgba(0,0,0,0.12); margin: 2.4em 0; }
+.post-body code { font-size: 0.9em; background: var(--warm-gray); padding: 2px 6px; border-radius: 4px; }
+.post-body pre { background: var(--warm-gray); padding: 18px 20px; border-radius: var(--radius); overflow-x: auto; }
+.post-body pre code { background: none; padding: 0; }
+
+/* "More from NEBCD" at the bottom of each post */
+.post-more-section { background: var(--warm-gray); padding: 56px 0 72px; }
+.post-more-inner { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+.post-more-heading {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 4px;
+}
+.news-item--compact { padding: 20px 0; border-bottom-color: rgba(0,0,0,0.1); }
+.news-item--compact:last-of-type { border-bottom: 1px solid rgba(0,0,0,0.1); }
+.news-item--compact .news-item-title { font-size: 1.2rem; margin: 10px 0 0; }
+.post-more .btn { margin-top: 32px; }
+
+/* ── Responsive ── */
+@media (max-width: 840px) {
+  .latest-card { margin-top: 44px; padding: 32px 26px 30px; }
+}
+@media (max-width: 560px) {
+  .hero-latest {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    border-radius: var(--radius-lg);
+    padding: 10px 14px 12px;
+  }
+  .hero-latest-title { flex-basis: 100%; white-space: normal; }
+  .hero-latest-arrow { display: none; }
+  .post-article { padding: 40px 20px 40px; }
+  .post-body { font-size: 17px; }
+  .news-list-section { padding: 32px 0 72px; }
+}
+
+/* Menu spacing: with News added the menu has eight links, so between the
+   phone menu (840px and below) and full desktop width the links sit a little
+   closer together and never break onto two lines. */
+.nav-links li a { white-space: nowrap; }
+@media (min-width: 841px) and (max-width: 1100px) {
+  .nav-links { gap: 2px; }
+  .nav-links li a { padding: 8px 8px; font-size: 13.5px; }
+  .nav-cta { padding: 9px 14px !important; }
+}

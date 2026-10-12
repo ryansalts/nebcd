@@ -6,6 +6,7 @@
 
 const fs    = require('fs');
 const https = require('https');
+const path  = require('path');
 
 // ── Load data ──────────────────────────────────────────────────────────────
 
@@ -102,6 +103,10 @@ const pageMode = PAGE_MODES.includes(settings.endorsements_page_mode) ? settings
 const isElectionMode = pageMode === 'election';
 const isRepsMode     = pageMode === 'representatives';
 const electionPageOn = pageMode !== 'hidden';
+// Election season = the Election page is in Endorsements or Election Guide mode.
+// It decides the order of the menu, the footer links and the homepage sections
+// (see SITE_MENU and HOME_SECTION_ORDER below).
+const electionSeason = pageMode === 'endorsements' || pageMode === 'election';
 
 const PAGE_TEXT = {
   election: {
@@ -118,6 +123,7 @@ const PAGE_TEXT = {
     schemaDescription: `Candidates on the ${cycle} Bexar County ballot, compiled by the North East Bexar County Democrats.`,
     homeHeading:       `${cycle} Election Guide`,
     homeButton:        'View the Election Guide →',
+    heroButton:        'View the Election Guide',
     resourcesHeading:  'Know Before You Vote',
     intro:             orDefault(settings.endorsements_intro, `NEBCD's guide to the candidates on your ${cycle} ballot.`),
   },
@@ -135,6 +141,7 @@ const PAGE_TEXT = {
     schemaDescription: `North East Bexar County Democrats endorsements for the ${cycle} Bexar County elections.`,
     homeHeading:       'Our Endorsements',
     homeButton:        'View All Endorsements →',
+    heroButton:        'See Our Endorsements',
     resourcesHeading:  'Know Before You Vote',
     intro:             orDefault(settings.intro_endorsements, `NEBCD proudly endorses these candidates for the ${cycle} election cycle.`),
   },
@@ -670,6 +677,7 @@ const FLAGS = {
   // Visit Us spot at the bottom of the homepage (photo + blue panel).
   LEADERSHIP_LIST_ON:    showLeadership && inSeason,
   LEADERSHIP_FEATURE_ON: showLeadership && offSeason,
+  HAS_NEWS:         false,            // at least one 📰 News & Statements post is published (set in main below)
 };
 
 // Club Leadership list items: name, plus title when one is filled in
@@ -711,6 +719,74 @@ function renderPlain(template, replacements = {}) {
     out = out.split(`{{${key}}}`).join(val == null ? '' : val);
   }
   return out;
+}
+
+// ── Site menu ──────────────────────────────────────────────────────────────
+// The menu at the top of every page and the "Navigate" links in every footer
+// are built from this one list, so they always match. To rename, reorder or add
+// a link, change it here (not in the templates).
+//   label  = text in the menu        footer = text in the footer, if different
+//   home   = link on the homepage    page   = link on every other page
+//   show   = whether it appears right now (seasonal switches, published news)
+// News appears once at least one post is published (hasNews is set in main below).
+let hasNews = false;
+const SITE_MENU = {
+  election:    { label: pageText.navLabel, page: 'endorsements.html', show: () => electionPageOn },
+  events:      { label: 'Events', page: 'events.html' },
+  news:        { label: 'News', footer: 'News & Statements', page: 'news/', show: () => hasNews },
+  about:       { label: 'About', home: '#mission', page: 'index.html#mission' },
+  getInvolved: { label: 'Get Involved', page: getInvolvedUrl, external: true },
+  store:       { label: 'Store', page: 'store.html', show: () => inSeason },
+  visit:       { label: 'Visit Us', home: '#visit', page: 'index.html#visit', show: () => inSeason },
+  leadership:  { label: 'Leadership', home: '#leadership', page: 'index.html#leadership', show: () => offSeason && showLeadership },
+};
+// Menu order. Election season puts the Election page first; between elections
+// the club itself (About) leads. "Join / Donate" is always added last, as the button.
+const MENU_ORDER = electionSeason
+  ? ['election', 'events', 'news', 'about', 'getInvolved', 'store', 'visit', 'leadership']
+  : ['about', 'events', 'news', 'getInvolved', 'election', 'store', 'visit', 'leadership'];
+
+function menuItems() {
+  return MENU_ORDER.map(key => SITE_MENU[key]).filter(item => !item.show || item.show());
+}
+function menuLink(item, isHome, text) {
+  const href = (isHome && item.home) || item.page;
+  const external = item.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+  return `<a href="${esc(href)}"${external}>${esc(text)}</a>`;
+}
+function buildNavLinks(isHome) {
+  return [
+    ...menuItems().map(item => `<li>${menuLink(item, isHome, item.label)}</li>`),
+    `<li><a href="${esc(settings.actblue_dues_url)}" target="_blank" class="nav-cta">Join / Donate</a></li>`,
+  ].join('\n        ');
+}
+function buildFooterLinks(isHome) {
+  return menuItems().map(item => `<li>${menuLink(item, isHome, item.footer || item.label)}</li>`).join('\n          ');
+}
+
+// ── Homepage section order ─────────────────────────────────────────────────
+// Each homepage section is marked in index.template.html with
+// <!-- [section:name] --> … <!-- [/section] -->, and the build puts them in this
+// order. Sections that are switched off are simply skipped. Follows the same
+// priorities as the menu above.
+const HOME_SECTION_ORDER = electionSeason
+  ? ['fundraiser', 'election', 'events', 'mission', 'get-involved', 'gallery', 'leadership-list', 'visit', 'leadership-feature']
+  : ['fundraiser', 'mission', 'events', 'get-involved', 'election', 'gallery', 'leadership-list', 'visit', 'leadership-feature'];
+
+function orderHomeSections(html) {
+  const marker = /<!-- \[section:([a-z-]+)\] -->\r?\n?([\s\S]*?)[ \t]*<!-- \[\/section\] -->\r?\n?/g;
+  const blocks = new Map();
+  let first = -1, last = -1, m;
+  while ((m = marker.exec(html))) {
+    if (first < 0) first = m.index;
+    last = m.index + m[0].length;
+    blocks.set(m[1], m[2]);
+  }
+  if (first < 0) return html;
+  const unknown = [...blocks.keys()].filter(k => !HOME_SECTION_ORDER.includes(k));
+  if (unknown.length) throw new Error(`Homepage section(s) not in HOME_SECTION_ORDER in build.js: ${unknown.join(', ')}`);
+  const ordered = HOME_SECTION_ORDER.filter(k => blocks.has(k)).map(k => blocks.get(k).trim()).filter(Boolean);
+  return html.slice(0, first) + ordered.join('\n\n    ') + '\n\n' + html.slice(last);
 }
 
 // ── Homepage band colors ───────────────────────────────────────────────────
@@ -892,6 +968,343 @@ function buildFundraiserSection() {
     </section>`;
 }
 
+// ── News & Statements ──────────────────────────────────────────────────────
+// 📰 News & Statements in the admin. Each post is its own file in _data/news/,
+// named from the post's title when it's first created (e.g. food-drive.json).
+// That file name becomes the post's web address (nebcd.org/news/food-drive) and
+// never changes afterwards, so shared links keep working even if the title is edited.
+//
+// Where posts appear:
+//   • Homepage, top photo: a one-line "New statement · Oct 12 — Title →" link,
+//     while the newest post is under HERO_LINE_DAYS days old.
+//   • Homepage, mission section: the latest post fills the right-hand column
+//     (where the two mission photos sit), while it's under LATEST_CARD_DAYS days
+//     old or pinned. After that the mission photos come back on their own.
+//   • nebcd.org/news: every post, newest first. Each post has its own page.
+// Only posts with "Ready to Publish" switched on are shown anywhere on the site.
+//
+// The age checks run on every build (including the nightly one) and again in the
+// visitor's browser, so the homepage stays correct even if a nightly build is missed.
+const NEWS_DIR         = '_data/news';
+const HERO_LINE_DAYS   = 30;
+const LATEST_CARD_DAYS = 90;
+
+const POST_TYPES = {
+  Statement:    { cls: 'statement',    heroLabel: 'New statement' },
+  News:         { cls: 'news',         heroLabel: 'Latest news' },
+  Announcement: { cls: 'announcement', heroLabel: 'Announcement' },
+};
+const postType = p => (POST_TYPES[p.type] ? p.type : 'News');
+
+// Days from a YYYY-MM-DD date to another (both plain calendar dates)
+function daysBetween(fromDate, toDate) {
+  const toUTC = d => { const [y, m, day] = String(d).slice(0, 10).split('-').map(Number); return Date.UTC(y, m - 1, day); };
+  return Math.round((toUTC(toDate) - toUTC(fromDate)) / 86400000);
+}
+function addDays(dateStr, days) {
+  const [y, m, d] = String(dateStr).slice(0, 10).split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
+const formatLongDate  = d => parseDate(d).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const formatShortDate = d => parseDate(d).toLocaleString('en-US', { month: 'short', day: 'numeric' });
+
+// Read every post file. Drafts ("Ready to Publish" off) and posts missing a title
+// or date are left off the site, and a note is printed in the build log.
+function readPosts() {
+  if (!fs.existsSync(NEWS_DIR)) return { published: [], drafts: 0 };
+  let drafts = 0;
+  const published = [];
+  for (const file of fs.readdirSync(NEWS_DIR).filter(f => f.toLowerCase().endsWith('.json')).sort()) {
+    let post;
+    try {
+      post = JSON.parse(fs.readFileSync(`${NEWS_DIR}/${file}`, 'utf8'));
+    } catch (err) {
+      console.warn(`  ⚠ Skipped news post ${file}: it couldn't be read (${err.message})`);
+      continue;
+    }
+    if (post.published !== true) { drafts++; continue; }
+    const date = String(post.date || '').slice(0, 10);
+    if (!String(post.title || '').trim() || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      console.warn(`  ⚠ Skipped news post ${file}: it needs a title and a date`);
+      continue;
+    }
+    const slug = file.replace(/\.json$/i, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '');
+    published.push({ ...post, title: String(post.title).trim(), date, slug, type: postType(post) });
+  }
+  // Newest first; posts on the same day keep a steady order by title
+  published.sort((a, b) => (b.date.localeCompare(a.date)) || a.title.localeCompare(b.title));
+  return { published, drafts };
+}
+
+// ── Markdown → HTML for post bodies ──
+// The admin's post editor saves Markdown. This covers everything its toolbar can
+// produce: headings, bold, italic, links, images, quotes, bulleted and numbered
+// lists (including nested ones), plus line breaks and dividers. Anything typed
+// as raw HTML is shown as plain text rather than run as code.
+
+function safeUrl(url) {
+  const u = String(url || '').trim();
+  return /^(javascript|vbscript|data):/i.test(u) ? '#' : u;
+}
+
+function mdInline(text) {
+  const stash = [];
+  const keep = html => `\u0000${stash.push(html) - 1}\u0000`;
+  let s = String(text);
+  // Backslash-escaped characters, e.g. \* or \_ (the editor adds these)
+  s = s.replace(/\\([\\`*_{}\[\]()#+\-.!>~|<])/g, (m, c) => keep(esc(c)));
+  s = s.replace(/`([^`]+)`/g, (m, c) => keep(`<code>${esc(c)}</code>`));
+  s = s.replace(/!\[([^\]]*)\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g,
+    (m, alt, src) => keep(`<img src="${esc(safeUrl(src))}" alt="${esc(alt)}" loading="lazy" />`));
+  s = s.replace(/\[([^\]]+)\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g, (m, label, href) => {
+    const url = safeUrl(href);
+    const external = /^https?:/i.test(url);
+    return keep(`<a href="${esc(url)}"${external ? ' target="_blank" rel="noopener"' : ''}>${mdInline(label)}</a>`);
+  });
+  s = s.replace(/<((?:https?:\/\/|mailto:)[^>\s]+)>/g,
+    (m, u) => keep(`<a href="${esc(u)}"${/^https?:/i.test(u) ? ' target="_blank" rel="noopener"' : ''}>${esc(u.replace(/^mailto:/i, ''))}</a>`));
+  // Plain web addresses typed into the text become links
+  s = s.replace(/(^|[\s(])(https?:\/\/[^\s<>"]*[^\s<>".,;:!?)\]'])/g,
+    (m, pre, u) => pre + keep(`<a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a>`));
+  s = esc(s);
+  s = s.replace(/(\*\*\*|___)(?=\S)([\s\S]*?\S)\1/g, '<strong><em>$2</em></strong>');
+  s = s.replace(/(\*\*|__)(?=\S)([\s\S]*?\S)\1/g, '<strong>$2</strong>');
+  s = s.replace(/\*(?=\S)([\s\S]*?\S)\*/g, '<em>$1</em>');
+  s = s.replace(/(^|[^\w])_(?=\S)([\s\S]*?\S)_(?!\w)/g, '$1<em>$2</em>');
+  s = s.replace(/~~(?=\S)([\s\S]*?\S)~~/g, '<del>$1</del>');
+  s = s.replace(/(?:\\|[ \t]{2,})\n/g, '<br />\n');
+  s = s.replace(/<br \/>\n\s*$/, '');
+  return s.replace(/\u0000(\d+)\u0000/g, (m, i) => stash[Number(i)]);
+}
+
+const LIST_ITEM = /^( {0,12})([-*+]|\d{1,9}[.)])[ \t]+(.*)$/;
+const indentOf  = line => line.match(/^ */)[0].length;
+const isBlockStart = line =>
+  /^ {0,3}(#{1,6}[ \t]|>|```|(\*[ \t]*){3,}$|(-[ \t]*){3,}$|(_[ \t]*){3,}$)/.test(line) || LIST_ITEM.test(line);
+
+function mdBlocks(md, headingFloor = 2) {
+  const lines = String(md || '').replace(/\r\n?/g, '\n').replace(/\t/g, '    ').split('\n');
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i++; continue; }
+
+    // Code block between ``` lines
+    if (/^ {0,3}```/.test(line)) {
+      const code = [];
+      i++;
+      while (i < lines.length && !/^ {0,3}```/.test(lines[i])) code.push(lines[i++]);
+      i++;
+      out.push(`<pre><code>${esc(code.join('\n'))}</code></pre>`);
+      continue;
+    }
+
+    // Heading. Post pages already use the title as the main heading, so the
+    // largest heading inside a post is shown one level down.
+    const h = line.match(/^ {0,3}(#{1,6})[ \t]+(.*?)[ \t#]*$/);
+    if (h) {
+      const level = Math.min(6, Math.max(headingFloor, h[1].length));
+      out.push(`<h${level}>${mdInline(h[2])}</h${level}>`);
+      i++;
+      continue;
+    }
+
+    // Divider line
+    if (/^ {0,3}((\*[ \t]*){3,}|(-[ \t]*){3,}|(_[ \t]*){3,})$/.test(line)) {
+      out.push('<hr />');
+      i++;
+      continue;
+    }
+
+    // Quote
+    if (/^ {0,3}>/.test(line)) {
+      const quoted = [];
+      while (i < lines.length && lines[i].trim() && (/^ {0,3}>/.test(lines[i]) || !isBlockStart(lines[i]))) {
+        quoted.push(lines[i].replace(/^ {0,3}> ?/, ''));
+        i++;
+      }
+      out.push(`<blockquote>\n${mdBlocks(quoted.join('\n'), headingFloor)}\n</blockquote>`);
+      continue;
+    }
+
+    // Bulleted or numbered list
+    const first = line.match(LIST_ITEM);
+    if (first) {
+      const base = indentOf(line);
+      const ordered = /\d/.test(first[2]);
+      const items = [];
+      let current = null;
+      while (i < lines.length) {
+        const l = lines[i];
+        const m = l.match(LIST_ITEM);
+        if (m && indentOf(l) <= base + 1 && /\d/.test(m[2]) === ordered) {
+          current = { start: Number.parseInt(m[2], 10), width: indentOf(l) + m[2].length + 1, lines: [m[3]] };
+          items.push(current);
+          i++;
+        } else if (!l.trim()) {
+          // A blank line ends the list unless the list carries on after it
+          let j = i + 1;
+          while (j < lines.length && !lines[j].trim()) j++;
+          const next = lines[j];
+          const nextItem = next && next.match(LIST_ITEM);
+          const continues = next && (indentOf(next) > base + 1 ||
+            (nextItem && indentOf(next) <= base + 1 && /\d/.test(nextItem[2]) === ordered));
+          if (!continues) break;
+          current.lines.push('');
+          i++;
+        } else if (indentOf(l) > base + 1) {
+          current.lines.push(l.slice(Math.min(indentOf(l), current.width)));
+          i++;
+        } else if (!isBlockStart(l)) {
+          current.lines.push(l.trim());   // a wrapped line that belongs to the item
+          i++;
+        } else {
+          break;
+        }
+      }
+      const tag = ordered ? 'ol' : 'ul';
+      const startAttr = ordered && items[0].start !== 1 ? ` start="${items[0].start}"` : '';
+      const lis = items.map(it => {
+        let html = mdBlocks(it.lines.join('\n'), headingFloor);
+        // A simple one-paragraph item doesn't need its own paragraph spacing
+        html = html.replace(/^<p>([\s\S]*?)<\/p>(?=\n|$)/, '$1');
+        return `<li>${html}</li>`;
+      }).join('\n');
+      out.push(`<${tag}${startAttr}>\n${lis}\n</${tag}>`);
+      continue;
+    }
+
+    // Paragraph: everything up to the next blank line or new block
+    const para = [line.trim()];
+    i++;
+    while (i < lines.length && lines[i].trim() && !isBlockStart(lines[i])) {
+      para.push(lines[i].replace(/^ +/, ''));
+      i++;
+    }
+    out.push(`<p>${mdInline(para.join('\n'))}</p>`);
+  }
+  return out.join('\n');
+}
+
+// Plain-text version of a post, for automatic summaries and search previews
+function mdToPlainText(md) {
+  return String(md || '')
+    .replace(/\r\n?/g, '\n')
+    .replace(/^ {0,3}```[\s\S]*?^ {0,3}```/gm, ' ')
+    .replace(/^ {0,3}#{1,6}[ \t]+.*$/gm, '')              // headings aren't part of the summary
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')                    // images
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')                 // links → their text
+    .replace(/^ {0,3}(>|[-*+][ \t]|\d+[.)][ \t])[ \t]*/gm, '')
+    .replace(/\\([\\`*_{}\[\]()#+\-.!>~|<])/g, '$1')
+    .replace(/(\*\*|__|~~|`)/g, '')
+    .replace(/(^|\W)[*_](\S[^*_]*?)[*_](?=\W|$)/g, '$1$2')
+    .replace(/[ \t]*\\?\n/g, '\n');
+}
+
+// Summary shown on the homepage, the News page and in link previews: the post's
+// own Summary if one was written, otherwise the opening lines of the post.
+function postSummary(post, maxLength = 220) {
+  const own = String(post.summary || '').trim();
+  if (own) return own;
+  const firstPara = mdToPlainText(post.body).split(/\n\s*\n/).map(p => p.replace(/\s+/g, ' ').trim()).find(Boolean) || '';
+  if (firstPara.length <= maxLength) return firstPara;
+  const cut = firstPara.slice(0, maxLength);
+  return cut.slice(0, cut.lastIndexOf(' ') > 120 ? cut.lastIndexOf(' ') : maxLength).replace(/[\s,;:.!?—–-]+$/, '') + '…';
+}
+
+// Pages inside news/ sit one folder down, so their relative links and images
+// (style.css, assets/…, events.html…) get a "../" in front.
+function relocate(html, prefix = '../') {
+  return html.replace(/(\s(?:src|href)=")(?!https?:|mailto:|tel:|data:|#|\/|\.\.\/)([^"]*)"/g, `$1${prefix}$2"`);
+}
+
+const postUrl     = p => `news/${p.slug}.html`;                    // link from the site's main folder
+const postAddress = p => `https://www.nebcd.org/news/${p.slug}`;   // public address, for sharing and search
+const typeBadge   = p => `<span class="post-type post-type--${POST_TYPES[p.type].cls}">${esc(p.type)}</span>`;
+
+// One row in a list of posts (News page and "More from NEBCD")
+function buildNewsItem(p, { compact = false } = {}) {
+  const summary = postSummary(p);
+  return `
+          <article class="news-item${compact ? ' news-item--compact' : ''}">
+            <div class="news-item-meta">${typeBadge(p)}<time datetime="${p.date}">${esc(formatLongDate(p.date))}</time></div>
+            <h${compact ? 3 : 2} class="news-item-title"><a href="${postUrl(p)}">${esc(p.title)}</a></h${compact ? 3 : 2}>
+            ${!compact && summary ? `<p>${esc(summary)}</p>` : ''}
+            ${compact ? '' : `<a href="${postUrl(p)}" class="btn-link">Read more →</a>`}
+          </article>`;
+}
+
+// Homepage pieces. Each returns '' when there's nothing to show.
+function pickHomepagePosts(posts) {
+  const newest = posts[0] || null;
+  const heroPost = newest && daysBetween(newest.date, todayCentral) <= HERO_LINE_DAYS ? newest : null;
+  const pinned = posts.find(p => p.pinned === true) || null;
+  const cardPost = pinned || (newest && daysBetween(newest.date, todayCentral) <= LATEST_CARD_DAYS ? newest : null);
+  return { heroPost, cardPost };
+}
+
+function buildHeroNewsLine(post) {
+  if (!post) return '';
+  // data-show-until: the browser hides this line after that date, in case a nightly build is missed
+  return `<a href="${postUrl(post)}" class="hero-latest" data-show-until="${addDays(post.date, HERO_LINE_DAYS)}">
+          <span class="hero-latest-label">${esc(POST_TYPES[post.type].heroLabel)}</span>
+          <span class="hero-latest-date">${esc(formatShortDate(post.date))}</span>
+          <span class="hero-latest-title">${esc(post.title)}</span>
+          <span class="hero-latest-arrow" aria-hidden="true">→</span>
+        </a>`;
+}
+
+function buildMissionPhotos(hidden = false) {
+  return `<div class="mission-photos" id="mission-photos"${hidden ? ' hidden' : ''}>
+            <div class="photo-stack">
+              <img src="${esc(missionPhotos[0].src)}" alt="${esc(missionPhotos[0].alt)}" class="photo-main" loading="lazy" />
+              <img src="${esc(missionPhotos[1].src)}" alt="${esc(missionPhotos[1].alt)}" class="photo-accent" loading="lazy" />
+            </div>
+          </div>`;
+}
+
+// Right-hand column of the mission section: the latest post, or the mission photos.
+function buildMissionSide(post) {
+  if (!post) return buildMissionPhotos();
+  const summary = postSummary(post);
+  // A pinned post stays until it's unpinned. Otherwise the browser swaps the photos
+  // back in once the post is LATEST_CARD_DAYS old, even if a nightly build is missed.
+  const expires = post.pinned === true ? '' : ` data-show-until="${addDays(post.date, LATEST_CARD_DAYS)}" data-swap-with="mission-photos"`;
+  return `<article class="latest-card"${expires}>
+            <span class="eyebrow">Latest from NEBCD</span>
+            <div class="news-item-meta">${typeBadge(post)}<time datetime="${post.date}">${esc(formatLongDate(post.date))}</time></div>
+            <h3 class="latest-card-title"><a href="${postUrl(post)}">${esc(post.title)}</a></h3>
+            ${summary ? `<p class="latest-card-summary">${esc(summary)}</p>` : ''}
+            <div class="latest-card-actions">
+              <a href="${postUrl(post)}" class="btn btn-blue">Read More →</a>
+              <a href="news/" class="btn-link">All news &amp; statements →</a>
+            </div>
+          </article>
+          ${expires ? buildMissionPhotos(true) : ''}`;
+}
+
+// News & Statements Schema.org data for each post page
+function buildPostSchema(post, image) {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: post.title,
+    description: postSummary(post, 300),
+    datePublished: post.date,
+    url: postAddress(post),
+    mainEntityOfPage: postAddress(post),
+    image: [image],
+    author: { '@type': 'Organization', name: 'North East Bexar County Democrats', url: 'https://www.nebcd.org' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'North East Bexar County Democrats',
+      logo: { '@type': 'ImageObject', url: 'https://www.nebcd.org/assets/NEBCD-Logo-Color.webp' },
+    },
+  };
+  return `<script type="application/ld+json">\n  ${JSON.stringify(schema, null, 2)}\n  <\/script>`;
+}
+
 // ── Store helpers ──────────────────────────────────────────────────────────
 
 function buildStoreProductGrid() {
@@ -960,11 +1373,13 @@ function buildSponsorEvents() {
 // ── Sitemap & llms.txt ─────────────────────────────────────────────────────
 
 // Only pages that are currently switched on are listed for search engines.
-function buildSitemap() {
+function buildSitemap(posts = []) {
   const urls = [
     ['/', 'weekly', '1.0', true],
     ['/events', 'weekly', '0.9', true],
     ['/endorsements', 'monthly', '0.8', electionPageOn],
+    ['/news/', 'weekly', '0.7', posts.length > 0],
+    ...posts.map(p => [`/news/${p.slug}`, 'monthly', '0.6', true]),
     ['/volunteer', 'monthly', '0.7', true],
     ['/store', 'monthly', '0.6', inSeason],
     ['/sponsor', 'monthly', '0.6', true],
@@ -1039,16 +1454,25 @@ function checkSite(pageFiles) {
   }
 
   const missing = new Map();
-  for (const page of fs.readdirSync(SITE_DIR).filter(f => f.endsWith('.html'))) {
+  // Pages in the main folder, plus the News & Statements pages in news/
+  const sitePages = [
+    ...fs.readdirSync(SITE_DIR).filter(f => f.endsWith('.html')),
+    ...(fs.existsSync(`${SITE_DIR}/news`) ? fs.readdirSync(`${SITE_DIR}/news`).filter(f => f.endsWith('.html')).map(f => `news/${f}`) : []),
+  ];
+  for (const page of sitePages) {
     const html = fs.readFileSync(`${SITE_DIR}/${page}`, 'utf8');
+    const folder = path.posix.dirname(page);
     const refs = [
       ...[...html.matchAll(/\s(?:src|href)="([^"]+)"/g)].map(m => m[1]),
-      ...[...html.matchAll(/content="https:\/\/www\.nebcd\.org\/([^"]+)"/g)].map(m => m[1]),
+      ...[...html.matchAll(/content="https:\/\/www\.nebcd\.org\/([^"]+)"/g)].map(m => '/' + m[1]),
     ];
     for (let ref of refs) {
       if (/^(https?:|mailto:|tel:|data:|#|\/\/)/i.test(ref)) continue;
-      ref = ref.split(/[?#]/)[0].replace(/^\//, '');
+      ref = ref.split(/[?#]/)[0];
       if (!ref) continue;
+      // Links starting with "/" are from the main folder; others are from the page's own folder
+      ref = ref.startsWith('/') ? ref.replace(/^\/+/, '') : path.posix.normalize(path.posix.join(folder, ref));
+      if (!ref || ref === '.') continue;
       if (!/\.[a-z0-9]+$/i.test(ref)) continue;   // extensionless page addresses like "events"
       if (!fs.existsSync(`${SITE_DIR}/${decodeURIComponent(ref)}`)) {
         if (!missing.has(ref)) missing.set(ref, new Set());
@@ -1080,6 +1504,19 @@ if (showMobilize) {
   mobilizeEvents = await fetchMobilizeEvents();
   console.log(`  ✓ ${mobilizeEvents.length} Mobilize event(s) fetched`);
 }
+
+// 📰 News & Statements
+const { published: posts, drafts } = readPosts();
+const { heroPost, cardPost } = pickHomepagePosts(posts);
+FLAGS.HAS_NEWS = hasNews = posts.length > 0;
+// Menu and footer links, now that it's known whether News has any posts.
+// The homepage uses its own in-page links (#mission); other pages link back to it.
+SHARED.NAV_LINKS    = buildNavLinks(false);
+SHARED.FOOTER_LINKS = buildFooterLinks(false);
+console.log(`Menu (${electionSeason ? 'election season' : 'between elections'}): ${menuItems().map(i => i.label).join(' · ')} · Join / Donate`);
+console.log(`News & Statements: ${posts.length} published, ${drafts} not ready to publish yet`);
+console.log(`  Homepage top line: ${heroPost ? `"${heroPost.title}"` : `none (no post in the last ${HERO_LINE_DAYS} days)`}`);
+console.log(`  Homepage mission column: ${cardPost ? `"${cardPost.title}"${cardPost.pinned === true ? ' (pinned)' : ''}` : 'mission photos'}`);
 
 // Short "closed for now" page shown at the address of a section that's switched off,
 // so old links and QR codes don't hit an error. Kept out of search results.
@@ -1115,6 +1552,23 @@ const pages = [
       ENDORSEMENT_PREVIEW_CARDS: buildEndorsementPreviewCards(),
       GALLERY_PHOTOS:            buildGalleryPhotos(),
       FUNDRAISER_SECTION:        buildFundraiserSection(),
+      HERO_NEWS_LINE:            buildHeroNewsLine(heroPost),
+      MISSION_SIDE:              buildMissionSide(cardPost),
+      NAV_LINKS:                 buildNavLinks(true),
+      FOOTER_LINKS:              buildFooterLinks(true),
+      // Small label over the homepage's election section
+      HOME_ELECTION_EYEBROW:     esc(isRepsMode ? pageText.eyebrow : 'Know Before You Vote'),
+      // Main button over the top photo: the Election page during election season,
+      // otherwise the office (campaign season) or upcoming events (off-season).
+      HERO_PRIMARY_BUTTON:       electionSeason
+        ? `<a href="endorsements.html" class="btn btn-primary">${esc(pageText.heroButton)}</a>`
+        : inSeason
+          ? '<a href="#visit" class="btn btn-primary">Visit Our Office</a>'
+          : '<a href="events.html" class="btn btn-primary">See Upcoming Events</a>',
+      // When the latest-post card isn't showing, a small link still leads to past posts
+      MISSION_NEWS_LINK:         posts.length && !cardPost
+        ? '<p class="mission-news-link"><a href="news/" class="btn-link">Read our news &amp; statements →</a></p>'
+        : '',
     }),
   },
   {
@@ -1197,7 +1651,7 @@ for (const page of pages) {
   if (fs.existsSync(templatePath)) {
     console.log(`Building ${outputPath}${page.template ? ' (closed-for-now notice)' : ''}...`);
     let html = render(fs.readFileSync(templatePath, 'utf8'), page.values());
-    if (page.file === 'index') html = alternateBands(html);
+    if (page.file === 'index') html = alternateBands(orderHomeSections(html));
     fs.writeFileSync(`${SITE_DIR}/${outputPath}`, syncNavLabel(html));
     console.log(`  ✓ ${outputPath}`);
   } else if (fs.existsSync(outputPath)) {
@@ -1209,7 +1663,54 @@ for (const page of pages) {
   }
 }
 
-fs.writeFileSync(`${SITE_DIR}/sitemap.xml`, buildSitemap());
+// 📰 News & Statements pages: nebcd.org/news (all posts) and nebcd.org/news/<post>.
+// Nothing is built until at least one post is published.
+const newsFiles = [];
+if (posts.length) {
+  fs.mkdirSync(`${SITE_DIR}/news`, { recursive: true });
+
+  console.log('Building news/index.html...');
+  const listHtml = render(fs.readFileSync('news.template.html', 'utf8'), {
+    NEWS_LIST: posts.map(p => buildNewsItem(p)).join('\n'),
+  });
+  fs.writeFileSync(`${SITE_DIR}/news/index.html`, relocate(syncNavLabel(listHtml)));
+  newsFiles.push('news/index.html');
+
+  const postTemplate = fs.readFileSync('post.template.html', 'utf8');
+  for (const p of posts) {
+    const photo = assetPath(p.photo);
+    const image = `https://www.nebcd.org/${photo || shareImage}`;
+    const others = posts.filter(o => o !== p).slice(0, 3);
+    const html = render(postTemplate, {
+      POST_TITLE:       esc(p.title),
+      POST_DESCRIPTION: esc(postSummary(p, 300)),
+      POST_ADDRESS:     esc(postAddress(p)),
+      POST_IMAGE:       esc(image),
+      POST_TYPE:        esc(p.type),
+      POST_TYPE_CLASS:  POST_TYPES[p.type].cls,
+      POST_DATE:        p.date,
+      POST_DATE_LONG:   esc(formatLongDate(p.date)),
+      POST_PHOTO:       photo
+        ? `<figure class="post-photo"><img src="${esc(photo)}" alt="${esc(p.photo_alt || '')}" /></figure>`
+        : '',
+      POST_MORE:        others.length
+        ? `<aside class="post-more">
+          <h2 class="post-more-heading">More from NEBCD</h2>
+          ${others.map(o => buildNewsItem(o, { compact: true })).join('\n')}
+          <a href="news/" class="btn btn-outline">All News &amp; Statements →</a>
+        </aside>`
+        : `<aside class="post-more"><a href="news/" class="btn btn-outline">All News &amp; Statements →</a></aside>`,
+      POST_SCHEMA:      buildPostSchema(p, image),
+      // The post's own text goes in last, so nothing typed in it is mistaken for a placeholder
+      POST_BODY:        mdBlocks(p.body),
+    });
+    fs.writeFileSync(`${SITE_DIR}/news/${p.slug}.html`, relocate(syncNavLabel(html)));
+    newsFiles.push(`news/${p.slug}.html`);
+  }
+  console.log(`  ✓ news/index.html and ${posts.length} post page(s)`);
+}
+
+fs.writeFileSync(`${SITE_DIR}/sitemap.xml`, buildSitemap(posts));
 console.log('  ✓ sitemap.xml');
 const llms = buildLlmsTxt();
 if (llms !== null) {
@@ -1220,7 +1721,7 @@ if (llms !== null) {
 }
 
 console.log('Checking the finished site...');
-checkSite(pageFiles);
+checkSite([...pageFiles, ...newsFiles]);
 
 console.log('\nBuild complete. Publishing the _site folder.');
 
