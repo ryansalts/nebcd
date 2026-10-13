@@ -8,8 +8,8 @@
       "size": "tall"
     },
     {
-      "src": "assets/nebcd-court-box.webp",
-      "alt": "NEBCD members in the Bexar County courtroom gallery",
+      "src": "assets/dark-side-0530.jpeg",
+      "alt": "Group discussion about The Dark Side",
       "size": "normal"
     },
     {
@@ -23,19 +23,29 @@
       "size": "wide"
     },
     {
-      "src": "assets/nebcd-judge-scharf-zeldes.webp",
-      "alt": "NEBCD members with Judge Scharf-Zeldes",
+      "src": "assets/no-kings-table.png",
+      "alt": "No Kings table",
       "size": "normal"
     },
     {
-      "src": "assets/nebcd-torres-group.webp",
-      "alt": "NEBCD members at a community event",
+      "src": "assets/ws-2025-ldp.jpeg",
+      "alt": "LDP 2025",
       "size": "normal"
     },
     {
       "src": "assets/nebcd-monique-diaz-group.webp",
       "alt": "NEBCD team members with Judge Monique Diaz",
       "size": "wide"
+    },
+    {
+      "size": "normal",
+      "src": "assets/caprice-win.jpeg",
+      "alt": "Election night win with Eva, Caprice & Susan"
+    },
+    {
+      "size": "normal",
+      "src": "assets/wide-shot-behind-tables.jpg",
+      "alt": "LDP 2025"
     }
   ]
 }
