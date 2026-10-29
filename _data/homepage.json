@@ -8,6 +8,11 @@
       "size": "tall"
     },
     {
+      "size": "normal",
+      "src": "assets/brookhollow.jpeg",
+      "alt": "Poll greeting at Brookhollow after the rain"
+    },
+    {
       "src": "assets/dark-side-0530.jpeg",
       "alt": "Group discussion about The Dark Side",
       "size": "normal"
@@ -46,11 +51,6 @@
       "size": "normal",
       "src": "assets/johnny-monday-pb.jpeg",
       "alt": "Garcia & Carranza blockwalk"
-    },
-    {
-      "size": "normal",
-      "src": "assets/brookhollow.jpeg",
-      "alt": "Poll greeting at Brookhollow after the rain"
     }
   ]
 }
