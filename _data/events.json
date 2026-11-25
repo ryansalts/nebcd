@@ -1,3 +1,15 @@
 {
-  "events": []
+  "events": [
+    {
+      "button_url": "#",
+      "button_label": "Attend",
+      "time": "10:00 am - Noon",
+      "featured": true,
+      "date": "2026-12-12",
+      "location": "Unity of San Antonio- 1723 W Lawndale Drive; 78209",
+      "title": "NEBCD Monthly Meeting",
+      "type": "Meeting",
+      "description": "Feel free to join us at our monthly meeting! "
+    }
+  ]
 }
