@@ -1,6 +1,6 @@
 {
   "off_season": true,
-  "endorsements_page_mode": "election",
+  "endorsements_page_mode": "representatives",
   "fundraiser": {
     "enabled": false,
     "eyebrow": "Fundraiser",
