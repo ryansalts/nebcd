@@ -1,5 +1,5 @@
 {
-  "off_season": false,
+  "off_season": true,
   "endorsements_page_mode": "election",
   "fundraiser": {
     "enabled": false,
