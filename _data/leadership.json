@@ -19,23 +19,7 @@
       "title": "Secretary"
     },
     {
-      "name": "Mary Finger",
-      "title": "Board Member"
-    },
-    {
-      "name": "Madeleine Dewar",
-      "title": "Board Member"
-    },
-    {
-      "name": "Daniel Tuft",
-      "title": ""
-    },
-    {
-      "name": "Zada True-Courage",
-      "title": ""
-    },
-    {
-      "name": "Shelley Potter",
+      "name": "Thomas Booker",
       "title": ""
     },
     {
@@ -47,27 +31,15 @@
       "title": ""
     },
     {
-      "name": "Jamie Lewis",
-      "title": ""
+      "name": "Madeleine Dewar",
+      "title": "Board Member"
     },
     {
-      "name": "Martha Spinks",
-      "title": ""
-    },
-    {
-      "name": "Anne Wiatrowski",
-      "title": ""
-    },
-    {
-      "name": "Javier Roman",
-      "title": ""
+      "name": "Mary Finger",
+      "title": "Board Member"
     },
     {
       "name": "Joe Gonzales",
-      "title": ""
-    },
-    {
-      "name": "Thomas Booker",
       "title": ""
     },
     {
@@ -76,6 +48,34 @@
     },
     {
       "name": "Debbie Jennings",
+      "title": ""
+    },
+    {
+      "name": "Jamie Lewis",
+      "title": ""
+    },
+    {
+      "name": "Shelley Potter",
+      "title": ""
+    },
+    {
+      "name": "Javier Roman",
+      "title": ""
+    },
+    {
+      "name": "Martha Spinks",
+      "title": ""
+    },
+    {
+      "name": "Zada True-Courage",
+      "title": ""
+    },
+    {
+      "name": "Daniel Tuft",
+      "title": ""
+    },
+    {
+      "name": "Anne Wiatrowski",
       "title": ""
     }
   ]
